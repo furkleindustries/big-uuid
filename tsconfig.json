@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "allowJs":                          true,
+    "downlevelIteration":               true,
+    "forceConsistentCasingInFileNames": true,
+    "jsx":                              "preserve",
+    "lib":                              [
+                                          "esnext"
+                                        ],
+  
+    "moduleResolution":                 "node",
+    "noEmitOnError":                    true,
+    "noFallthroughCasesInSwitch":       true,
+    "noUnusedLocals":                   true,
+    "noUnusedParameters":               true,
+    "preserveConstEnums":               true,
+    "removeComments":                   true,
+    "sourceMap":                        false,
+    "strict":                           true,
+    "target":                           "es6"
+  },
+
+  "exclude": [ "src/**/*.test.*" ],
+  "include": [ "src/**/*" ]
+}
