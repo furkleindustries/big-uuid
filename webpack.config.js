@@ -38,7 +38,7 @@ const esFiveBrowserConfig = Object.assign({}, baseConfig, {
   output: {
     path: path.resolve(__dirname, 'dist/browser.es5/'),
     filename: 'index.js',
-    library: 'ifid',
+    library: 'uuid',
     libraryTarget: 'umd',
   },
 
@@ -86,7 +86,7 @@ const esSixBrowserConfig = Object.assign({}, baseConfig, {
   output: {
     path: path.resolve(__dirname, 'dist/browser.es6/'),
     filename: 'index.js',
-    library: 'ifid',
+    library: 'uuid',
     libraryTarget: 'umd',
   },
 
