@@ -1,3 +1,4 @@
+export * from './Enums/NamespaceIds';
 export * from './UUID/UUIDOptions/IUUIDOptions';
 export * from './UUID/UUIDOptions/UUIDOptions';
 export * from './UUID/IUUID';
@@ -9,3 +10,4 @@ export * from './nodeIdentifierGetter';
 export * from './numberAsLittleEndianHexStr';
 export * from './timestampGetter';
 export * from './uintArrayAsNumber';
+export * from './TypeAliases/TUUIDVersion';
