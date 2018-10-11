@@ -10,4 +10,5 @@ export * from './nodeIdentifierGetter';
 export * from './numberAsLittleEndianHexStr';
 export * from './timestampGetter';
 export * from './uintArrayAsNumber';
+export * from './TypeAliases/TNamespaceId';
 export * from './TypeAliases/TUUIDVersion';
