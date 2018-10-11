@@ -8,9 +8,6 @@ import {
   IUUIDOptions,
 } from './IUUIDOptions';
 import {
-  NamespaceIds,
-} from '../../Enums/NamespaceIds';
-import {
   nodeIdentifierGetter,
 } from '../../nodeIdentifierGetter';
 import {
@@ -19,6 +16,9 @@ import {
 import {
   timestampGetter,
 } from '../../timestampGetter';
+import {
+  TNamespaceId,
+} from '../../TypeAliases/TNamespaceId';
 import {
   TUUIDVersion,
 } from '../../TypeAliases/TUUIDVersion';
@@ -29,7 +29,7 @@ export class UUIDOptions implements IUUIDOptions {
   nodeIdentifierGetter = nodeIdentifierGetter;
   timestampGetter = timestampGetter;
   name?: string;
-  namespaceId?: NamespaceIds;
+  namespaceId?: TNamespaceId;
 
   constructor(_args: { [key: string]: any } = {}) {
     const args = _args || {};
@@ -58,7 +58,7 @@ export class UUIDOptions implements IUUIDOptions {
     }
 
     if (args.namespaceId && typeof args.namespaceId === 'string') {
-      this.namespaceId = args.namespaceId as NamespaceIds;
+      this.namespaceId = args.namespaceId;
     }
 
     if (/^[35]$/.test(this.version.toString())) {

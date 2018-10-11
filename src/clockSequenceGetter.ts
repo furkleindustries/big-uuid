@@ -11,14 +11,14 @@ import {
   lastResults,
 } from './lastResults';
 import {
-  NamespaceIds,
-} from './Enums/NamespaceIds';
-import {
   randomBytesGenerator,
 } from './randomBytesGenerator';
 import {
   strings,
 } from './strings';
+import {
+  TNamespaceId,
+} from './TypeAliases/TNamespaceId';
 import {
   TUUIDVersion,
 } from './TypeAliases/TUUIDVersion';
@@ -28,7 +28,7 @@ import {
 
 export function clockSequenceGetter(
   version: TUUIDVersion,
-  namespaceId?: NamespaceIds,
+  namespaceId?: TNamespaceId,
   name?: string,
 ): Uint8Array
 {

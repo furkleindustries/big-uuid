@@ -2,18 +2,18 @@ import {
   createHash,
 } from 'crypto';
 import {
-  NamespaceIds,
-} from './Enums/NamespaceIds';
-import {
   strings,
 } from './strings';
+import {
+  TNamespaceId,
+} from './TypeAliases/TNamespaceId';
 import {
   TUUIDVersion,
 } from './TypeAliases/TUUIDVersion';
 
 export const getHashFromNamespaceIdAndName = (
   version: TUUIDVersion,
-  namespaceId: NamespaceIds,
+  namespaceId: TNamespaceId,
   name: string,
 ): string => {
   if (!namespaceId) {

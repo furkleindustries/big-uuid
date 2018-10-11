@@ -2,16 +2,16 @@ import {
   TUUIDVersion,
 } from '../../TypeAliases/TUUIDVersion';
 import {
-  NamespaceIds,
-} from '../../Enums/NamespaceIds';
+  TNamespaceId,
+} from '../../TypeAliases/TNamespaceId';
 
 export interface IUUIDOptions {
   version: TUUIDVersion;
   name?: string;
-  namespaceId?: NamespaceIds;
-  nodeIdentifierGetter: (version: TUUIDVersion, namespaceId?: NamespaceIds, name?: string) => Uint8Array;
-  timestampGetter:      (version: TUUIDVersion, namespaceId?: NamespaceIds, name?: string) => Uint8Array;
-  clockSequenceGetter:  (version: TUUIDVersion, namespaceId?: NamespaceIds, name?: string) => Uint8Array;
+  namespaceId?: TNamespaceId;
+  nodeIdentifierGetter: (version: TUUIDVersion, namespaceId?: TNamespaceId, name?: string) => Uint8Array;
+  timestampGetter:      (version: TUUIDVersion, namespaceId?: TNamespaceId, name?: string) => Uint8Array;
+  clockSequenceGetter:  (version: TUUIDVersion, namespaceId?: TNamespaceId, name?: string) => Uint8Array;
 };
 
 export default IUUIDOptions;

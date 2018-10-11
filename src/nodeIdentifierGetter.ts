@@ -11,21 +11,21 @@ import {
   lastResults,
 } from './lastResults';
 import {
-  NamespaceIds,
-} from './Enums/NamespaceIds';
-import {
   randomBytesGenerator,
 } from './randomBytesGenerator';
 import {
   strings,
 } from './strings';
 import {
+  TNamespaceId,
+} from './TypeAliases/TNamespaceId';
+import {
   TUUIDVersion,
 } from './TypeAliases/TUUIDVersion';
 
 export function nodeIdentifierGetter(
   version: TUUIDVersion,
-  namespaceId?: NamespaceIds,
+  namespaceId?: TNamespaceId,
   name?: string,
 ): Uint8Array
 {
