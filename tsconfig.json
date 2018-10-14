@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
-    "allowJs":                          true,
+    "module":                           "esnext",
+    "outDir":                           "./dist/node.esnext/",
+    "declaration":                      true,
+    "target":                           "esnext",
     "downlevelIteration":               true,
+    "esModuleInterop":                  true,
     "forceConsistentCasingInFileNames": true,
     "jsx":                              "preserve",
     "lib":                              [
@@ -15,9 +19,7 @@
     "noUnusedParameters":               true,
     "preserveConstEnums":               true,
     "removeComments":                   true,
-    "sourceMap":                        false,
-    "strict":                           true,
-    "target":                           "es6"
+    "strict":                           true
   },
 
   "exclude": [ "src/**/*.test.*" ],

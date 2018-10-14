@@ -1,8 +1,9 @@
-const path     = require('path');
-const uglifyjs = require('uglifyjs-webpack-plugin');
-const webpack  = require('webpack');
+const path = require('path');
 
+const mode = process.env.NODE_ENV === 'development' ? 'development' : 'production';
 const baseConfig = {
+  mode,
+  target: 'node',
   entry: path.resolve(__dirname, 'dist/node.esnext/index.js'),
   resolve: {
     extensions: [ '.ts', '.js', ],
@@ -11,11 +12,8 @@ const baseConfig = {
   node: {
     crypto: 'empty',
     fs: 'empty',
+    process: false,
   },
-
-  plugins: [
-    new uglifyjs({ sourceMap: true, }),
-  ],
 
   performance: {
     hints: 'warning',
@@ -36,9 +34,9 @@ const baseConfig = {
 
 const esFiveBrowserConfig = Object.assign({}, baseConfig, {
   output: {
-    path: path.resolve(__dirname, 'dist/browser.es5/'),
+    path: path.resolve(__dirname, 'dist/umd/'),
     filename: 'index.js',
-    library: 'uuid',
+    library: 'ifid',
     libraryTarget: 'umd',
   },
 
@@ -53,14 +51,16 @@ const esFiveBrowserConfig = Object.assign({}, baseConfig, {
         use: {
           loader: 'babel-loader',
           options: {
+            babelrc: false,
             presets: [
               [
-                'env',
+                '@babel/preset-env',
 
                 {
                   targets: {
                     browsers: [
                       'ie >= 8',
+                      '> 1%'
                     ],
                   },
 
@@ -68,12 +68,6 @@ const esFiveBrowserConfig = Object.assign({}, baseConfig, {
                   modules: false,
                 },
               ],
-
-              'stage-1',
-            ],
-
-            plugins: [
-              'transform-object-assign',
             ],
           },
         },
@@ -82,11 +76,12 @@ const esFiveBrowserConfig = Object.assign({}, baseConfig, {
   },
 });
 
-const esSixBrowserConfig = Object.assign({}, baseConfig, {
+// This is producing the exact same bundle size as the above es5 config.
+/*const esSixBrowserConfig = Object.assign({}, baseConfig, {
   output: {
     path: path.resolve(__dirname, 'dist/browser.es6/'),
     filename: 'index.js',
-    library: 'uuid',
+    library: 'ifid',
     libraryTarget: 'umd',
   },
 
@@ -101,9 +96,10 @@ const esSixBrowserConfig = Object.assign({}, baseConfig, {
         use: {
           loader: 'babel-loader',
           options: {
+            babelrc: false,
             presets: [
               [
-                'env',
+                '@babel/preset-env',
 
                 {
                   targets: {
@@ -116,21 +112,15 @@ const esSixBrowserConfig = Object.assign({}, baseConfig, {
                   modules: false,
                 },
               ],
-
-              'stage-1',
-            ],
-
-            plugins: [
-              'transform-object-assign',
             ],
           },
         },
       },
     ],
   },
-});
+});*/
 
 module.exports = [
   esFiveBrowserConfig,
-  esSixBrowserConfig,
+  /*esSixBrowserConfig,*/
 ];
