@@ -35,7 +35,7 @@ const esFiveBrowserConfig = Object.assign({}, baseConfig, {
   output: {
     path: path.resolve(__dirname, 'dist/umd/'),
     filename: 'index.js',
-    library: 'ifid',
+    library: 'bigUUID',
     libraryTarget: 'umd',
     globalObject: 'this',
   },
