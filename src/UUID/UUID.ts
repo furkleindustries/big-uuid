@@ -77,6 +77,10 @@ export class UUID implements IUUID {
       if (opts.namespaceId) {
         options.namespaceId = opts.namespaceId;
       }
+
+      if (opts.name) {
+        options.name = opts.name;
+      }
     }
 
     let version = options.version;
