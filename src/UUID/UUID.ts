@@ -14,9 +14,6 @@ import {
   IUUIDOptions,
 } from './UUIDOptions/IUUIDOptions';
 import {
-  numberAsLittleEndianHexStr,
-} from '../numberAsLittleEndianHexStr';
-import {
   strings,
 } from '../strings';
 import {
@@ -294,9 +291,9 @@ export class UUID implements IUUID {
 
   toString(): string {
     const format = (value: Uint8Array, toPad: number) => (
-      numberAsLittleEndianHexStr(uintArrayAsNumber(value))
+      uintArrayAsNumber(value).toString(16)
         /* Pad any missing most-significant-digits. */
-        .padEnd(toPad, '0')
+        .padStart(toPad, '0')
     );
 
     return (
