@@ -43,6 +43,10 @@ export function timestampGetter(
     {
       /* Increment the clock sequence given that the timestamp is invalid. */
       lastResults.clockSequence[1] += 1;
+      if (lastResults.clockSequence[1] === 0) {
+        /* Increment the upper byte if the lower byte wrapped around. */
+        lastResults.clockSequence[0] += 1;
+      }
     }
 
     const timestampStr = currentTimestamp.toString(2).padStart(60, '0');
