@@ -33,7 +33,7 @@ const baseConfig = {
 
 const esFiveBrowserConfig = Object.assign({}, baseConfig, {
   output: {
-    path: path.resolve(__dirname, 'dist/umd/'),
+    path: path.resolve(__dirname, 'dist/browser/'),
     filename: 'index.js',
     library: 'bigUUID',
     libraryTarget: 'umd',

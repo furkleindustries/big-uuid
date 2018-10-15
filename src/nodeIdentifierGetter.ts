@@ -2,9 +2,6 @@ import {
   convertBinStrToUint8Array,
 } from './convertBinStrToUint8Array';
 import {
-  getHashFromNamespaceIdAndName,
-} from './getHashFromNamespaceIdAndName';
-import {
   getMAC,
 } from './getMAC';
 import {
@@ -17,16 +14,12 @@ import {
   strings,
 } from './strings';
 import {
-  TNamespaceId,
-} from './TypeAliases/TNamespaceId';
-import {
   TUUIDVersion,
 } from './TypeAliases/TUUIDVersion';
 
 export function nodeIdentifierGetter(
   version: TUUIDVersion,
-  namespaceId?: TNamespaceId,
-  name?: string,
+  hash?: string,
 ): Uint8Array
 {
   let nodeIdentifier: Uint8Array;
@@ -40,11 +33,9 @@ export function nodeIdentifierGetter(
     nodeIdentifier = getMAC();
     lastResults.nodeIdentifier = nodeIdentifier;
   } else if (/^[35]$/.test(version.toString())) {
-    const hash = getHashFromNamespaceIdAndName(
-      version,
-      namespaceId!,
-      name!,
-    );
+    if (!hash) {
+      throw new Error(strings.HASH_ARGUMENT_MISSING);
+    }
 
     let nodeIdentifierStr = '';
     

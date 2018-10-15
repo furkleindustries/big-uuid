@@ -1,6 +1,8 @@
 import {
-  createHash,
-} from 'crypto';
+  enc,
+  SHA1,
+  MD5,
+} from 'crypto-js';
 import {
   strings,
 } from './strings';
@@ -22,13 +24,7 @@ export const getHashFromNamespaceIdAndName = (
     throw new Error(strings.NAME_MISSING);
   }
 
-  let hasher;
-  if (version.toString() === '3') {
-    hasher = createHash('md5');
-  } else {
-    hasher = createHash('sha1');
-  }
-
+  /* Put the namespace ID into "network byte order" (big-endian) */
   const bigEndianNamespaceId = namespaceId.split('-').map((segment) => {
     const len = segment.length;
     return parseInt(
@@ -41,6 +37,13 @@ export const getHashFromNamespaceIdAndName = (
     ).toString(16).padEnd(len, '0');
   }).join('-');
 
-  hasher.update(bigEndianNamespaceId + name);
-  return hasher.digest('hex');
+  const toHash = bigEndianNamespaceId + name;
+  let hash;
+  if (version.toString() === '3') {
+    hash = MD5(toHash);
+  } else {
+    hash = SHA1(toHash);
+  }
+
+  return enc.Hex.stringify(hash);
 }

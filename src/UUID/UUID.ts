@@ -1,4 +1,7 @@
 import {
+  getHashFromNamespaceIdAndName,
+} from '../getHashFromNamespaceIdAndName';
+import {
   isNode,
 } from '../isNode';
 import {
@@ -51,36 +54,32 @@ import {
  *          "A" / "B" / "C" / "D" / "E" / "F"
  */
 export class UUID implements IUUID {
-  constructor(options?: Partial<IUUIDOptions>) {
-    const opts = new UUIDOptions();
+  constructor(opts?: Partial<IUUIDOptions>) {
+    const options = new UUIDOptions();
 
-    if (typeof options === 'object' && options) {
-      if (options.version) {
-        opts.version = options.version;
+    if (opts && typeof opts === 'object') {
+      if (opts.version) {
+        options.version = opts.version;
       }
 
-      if (options.clockSequenceGetter) {
-        opts.clockSequenceGetter = options.clockSequenceGetter;
+      if (opts.clockSequenceGetter) {
+        options.clockSequenceGetter = opts.clockSequenceGetter;
       }
 
-      if (options.timestampGetter) {
-        opts.timestampGetter = options.timestampGetter;
+      if (opts.timestampGetter) {
+        options.timestampGetter = opts.timestampGetter;
       }
 
-      if (options.nodeIdentifierGetter) {
-        opts.nodeIdentifierGetter = options.nodeIdentifierGetter;
+      if (opts.nodeIdentifierGetter) {
+        options.nodeIdentifierGetter = opts.nodeIdentifierGetter;
       }
 
-      if (options.namespaceId) {
-        opts.namespaceId = options.namespaceId;
-      }
-
-      if (options.name) {
-        opts.name = options.name;
+      if (opts.namespaceId) {
+        options.namespaceId = opts.namespaceId;
       }
     }
 
-    let version = opts.version;
+    let version = options.version;
     if (!isUUIDVersion(version)) {
       throw new Error(strings.UUID_VERSION_INVALID);
     }
@@ -98,39 +97,48 @@ export class UUID implements IUUID {
     this.__version = version;
 
     if (/^[35]$/.test(version.toString())) {
+      if (!options.namespaceId) {
+        throw new Error(strings.NAMESPACE_ID_MISSING);
+      } else if (!options.name) {
+        throw new Error(strings.NAME_MISSING);
+      }
+
+      const hash = getHashFromNamespaceIdAndName(
+        version,
+        options.namespaceId,
+        options.name,
+      );
+
       /* Clock sequence is highly dependent on other values and their 
        * availability, so it should be generated first. */
-      const clockSequence = opts.clockSequenceGetter(
+      const clockSequence = options.clockSequenceGetter(
         version,
-        opts.namespaceId,
-        opts.name
+        hash,
       );
 
       this.__clockSequence = clockSequence;
       
-      const timestamp = opts.timestampGetter(
+      const timestamp = options.timestampGetter(
         version,
-        opts.namespaceId,
-        opts.name,
+        hash,
       );
       
       this.__timestamp = timestamp;
 
-      const nodeIdentifier = opts.nodeIdentifierGetter(
+      const nodeIdentifier = options.nodeIdentifierGetter(
         version,
-        opts.namespaceId,
-        opts.name,
+        hash,
       );
 
       this.__nodeIdentifier = nodeIdentifier;
     } else {
-      const clockSequence = opts.clockSequenceGetter(version);
+      const clockSequence = options.clockSequenceGetter(version);
       this.__clockSequence = clockSequence;
       
-      const timestamp = opts.timestampGetter(version);
+      const timestamp = options.timestampGetter(version);
       this.__timestamp = timestamp;
       
-      const nodeIdentifier = opts.nodeIdentifierGetter(version);
+      const nodeIdentifier = options.nodeIdentifierGetter(version);
       this.__nodeIdentifier = nodeIdentifier;
       
       if (isNode() && this.version.toString() === '1') {

@@ -2,9 +2,6 @@ import {
   convertBinStrToUint8Array,
 } from './convertBinStrToUint8Array';
 import {
-  getHashFromNamespaceIdAndName,
-} from './getHashFromNamespaceIdAndName';
-import {
   getHundredsOfNanosecondsSinceGregorianReform,
 } from './getHundredsOfNanosecondsSinceGregorianReform';
 import {
@@ -20,9 +17,6 @@ import {
   strings,
 } from './strings';
 import {
-  TNamespaceId,
-} from './TypeAliases/TNamespaceId';
-import {
   TUUIDVersion,
 } from './TypeAliases/TUUIDVersion';
 import {
@@ -31,8 +25,7 @@ import {
 
 export function timestampGetter(
   version: TUUIDVersion,
-  namespaceId?: TNamespaceId,
-  name?: string,
+  hash?: string,
 ): Uint8Array
 {
   if (!isUUIDVersion(version)) {
@@ -62,11 +55,9 @@ export function timestampGetter(
     timestamp = new Uint8Array(inputArr);
   } else if (/^[35]$/.test(version.toString())) {    
     /* Version is 3 or 5. */
-    const hash = getHashFromNamespaceIdAndName(
-      version,
-      namespaceId!,
-      name!,
-    );
+    if (!hash) {
+      throw new Error(strings.HASH_ARGUMENT_MISSING);
+    }
 
     let timestampStr = '';
     /* time_low */
