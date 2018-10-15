@@ -1,6 +1,6 @@
 {
   "name": "big-uuid",
-  "version": "0.1.11",
+  "version": "0.2",
   "description": "An RFC 4112 conformant UUID generator creating v1, v3, v4, and v5 UUIDs.",
   "main": "dist/node.es6/index.js",
   "browser": "dist/browser/index.js",
