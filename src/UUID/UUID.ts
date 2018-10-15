@@ -231,16 +231,9 @@ export class UUID implements IUUID {
       throw new Error(strings.UUID_STRING_INVALID);
     }
 
-    const leHexToBeHex = (leHex: string) => (
-      parseInt(
-        parseInt(leHex, 16).toString(2).split('').reverse().join(),
-        2
-      ).toString(16)
-    );
-
-    const timeLow = leHexToBeHex(split[0]);
-    const timeMid = leHexToBeHex(split[1]);
-    const timeHighAndVersion = leHexToBeHex(split[2]);
+    const timeLow = split[0];
+    const timeMid = split[1];
+    const timeHighAndVersion = split[2];
 
     const timeHigh = timeHighAndVersion.slice(0, 3);
     const version = timeHighAndVersion[4];
@@ -253,7 +246,7 @@ export class UUID implements IUUID {
 
     const timestamp = new Uint8Array(timestampArr);
 
-    const clockSequenceHighAndReservedAndLow = leHexToBeHex(split[3]);
+    const clockSequenceHighAndReservedAndLow = split[3];
     const clockSequenceHighAndReservedHex =
       clockSequenceHighAndReservedAndLow.slice(0, 2);
     const clockSequenceHighHex =
@@ -273,7 +266,7 @@ export class UUID implements IUUID {
 
     const clockSequence = new Uint8Array(clockSequenceArr);
 
-    const nodeIdentifierHex = leHexToBeHex(split[4]);
+    const nodeIdentifierHex = split[4];
     const nodeIdentifierArr = [];
     for (let ii = 0; ii < 12; ii += 2) {
       nodeIdentifierArr.push(parseInt(nodeIdentifierHex.slice(ii, ii + 2), 16));
