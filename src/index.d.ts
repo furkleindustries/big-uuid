@@ -11,3 +11,9 @@ export * from './timestampGetter';
 export * from './uintArrayAsNumber';
 export * from './TypeAliases/TNamespaceId';
 export * from './TypeAliases/TUUIDVersion';
+export declare const cryptoJs: {
+    hex: any;
+    MD5: any;
+    SHA1: any;
+    SHA224: any;
+};
