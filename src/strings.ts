@@ -38,23 +38,12 @@ export const strings = {
     'The clockSequenceHighAndReserved property of the UUID object is ' +
     'malformed.',
 
-  HASH_ARGUMENT_MISSING:
-    'The hash argument was not provided, without which a v3 or v5 UUID ' +
-    'cannot be created.',
-
   MAC_ADDRESS_UNAVAILABLE:
     'The MAC address is unavailable, which makes creating the version 1 ' +
     'node ID impossible.',
 
   MAC_ADDRESS_INVALID:
     'The MAC address was found, but it was malformed.',
-
-  MD5_IN_BROWSER:
-    'MD5 is a dangerously outmoded hash algorithm and cannot be used in ' +
-    'modern browsers.',
-
-  NO_HASHER_FOUND:
-    'No suitable hash function could be found.',
 
   UUID_LAST_RESULTS_INVALID:
     'The provided last results object did not meet the isValidLastResults ' +
@@ -86,3 +75,5 @@ export const strings = {
   NODE_IDENTIFIER_INVALID:
     'The nodeIdentifier property of the UUID object was malformed.',
 };
+
+export default strings;
