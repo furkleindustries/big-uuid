@@ -57,7 +57,7 @@ export function timestampGetter(
     }
 
     timestamp = new Uint8Array(inputArr);
-  } else if (/^[35]$/.test(version.toString())) {    
+  } else if (/^[35]$/.test(version.toString())) {
     /* Version is 3 or 5. */
     if (!hash) {
       throw new Error(strings.HASH_ARGUMENT_MISSING);
