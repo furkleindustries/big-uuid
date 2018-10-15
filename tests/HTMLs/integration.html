@@ -13,30 +13,24 @@
     console.log('Default (v4)');
     console.log(bigUUID.uuidFactory().toString());
     
-    bigUUID.uuidFactory({
+    console.log('v1');
+    console.log(new bigUUID.UUID({
       version: 1,
-    }).then(function (a) {
-      console.log('v1');
-      console.log(a.toString());
-    });
+    }).toString());
 
-    bigUUID.uuidFactory({
+    console.log('v3');
+    console.log(new bigUUID.UUID({
       version: 3,
       namespaceId: bigUUID.NamespaceIds.URL,
       name: 'test',
-    }).then(function (a) {
-      console.log('v3');
-      console.log(a.toString());
-    });
+    }).toString());
 
-    bigUUID.uuidFactory({
+    console.log('v5');
+    console.log(new bigUUID.UUID({
       version: 5,
       namespaceId: bigUUID.NamespaceIds.URL,
       name: 'test',
-    }).then(function (a) {
-      console.log('v5');
-      console.log(a.toString());
-    });
+    }).toString());
     </script>
   </body>
 </html>
