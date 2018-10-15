@@ -1,9 +1,4 @@
 import {
-  enc,
-  SHA1,
-  MD5,
-} from 'crypto-js';
-import {
   strings,
 } from './strings';
 import {
@@ -12,6 +7,10 @@ import {
 import {
   TUUIDVersion,
 } from './TypeAliases/TUUIDVersion';
+
+const SHA1 = require('crypto-js/sha1');
+const MD5 = require('crypto-js/md5');
+const hex = require('crypto-js/enc-hex');
 
 export const getHashFromNamespaceIdAndName = (
   version: TUUIDVersion,
@@ -45,5 +44,5 @@ export const getHashFromNamespaceIdAndName = (
     hash = SHA1(toHash);
   }
 
-  return enc.Hex.stringify(hash);
+  return hex.stringify(hash);
 }
