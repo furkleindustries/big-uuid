@@ -18,9 +18,11 @@ export * from './uintArrayAsNumber';
 export * from './TypeAliases/TNamespaceId';
 export * from './TypeAliases/TUUIDVersion';
 
-/* Export required crypto-js libraries to reduce bundle size in `ifid`. */
+/* Export required crypto-js libraries to reduce bundle size in `ifid`.
+ * This shouldn't be necessary but there's something weird about the way
+ * crypto-js modularizes its libraries and Typescript doesn't like it. */
 const SHA1 = require('crypto-js/sha1');
-const SHA224 = require('crypto-js/sha224')
+const SHA256 = require('crypto-js/sha256')
 const MD5 = require('crypto-js/md5');
 const hex = require('crypto-js/enc-hex');
 
@@ -28,5 +30,5 @@ export const cryptoJs = {
   hex,
   MD5,
   SHA1,
-  SHA224,
+  SHA256,
 };

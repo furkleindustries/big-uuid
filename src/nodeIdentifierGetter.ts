@@ -41,9 +41,16 @@ export function nodeIdentifierGetter(
     
     /* node_identifier */
     nodeIdentifierStr += hash.slice(20, 32);
-    const nodeIdentifierBinStr = parseInt(nodeIdentifierStr, 16)
+    let nodeIdentifierBinStr = parseInt(nodeIdentifierStr, 16)
       .toString(2)
       .padStart(48, '0');
+
+    /* Set the unicast/multicast bit (the least significant bit in the first
+     * byte) to 1, for multicast. */
+    nodeIdentifierBinStr =
+      nodeIdentifierBinStr.slice(0, 7) +
+      '1' +
+      nodeIdentifierBinStr.slice(8); 
 
     nodeIdentifier = convertBinStrToUint8Array(nodeIdentifierBinStr);
   } else if (version.toString() === '4') {

@@ -21,8 +21,6 @@ export function getMAC(): Uint8Array {
             .split(':')
             .map((byteStr) => parseInt(byteStr, 16));
 
-          /* TODO: set cast bit to multicast (1). */
-
           return new Uint8Array(bytes);
         }
       }

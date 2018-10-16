@@ -15,5 +15,5 @@ export declare const cryptoJs: {
     hex: any;
     MD5: any;
     SHA1: any;
-    SHA224: any;
+    SHA256: any;
 };

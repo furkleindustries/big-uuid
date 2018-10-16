@@ -19,13 +19,13 @@ const baseConfig = {
     maxAssetSize: 200000,
     maxEntrypointSize: 400000,
     assetFilter(assetFilename) {
-      return assetFilename.endsWith('.js') || assetFilename.endsWith('.ts');
+      return /\.[jt]$/.test(assetFilename);
     },
   },
 
   devtool: 'source-map',
   context: __dirname,
-  stats: 'errors-only',
+  stats: 'verbose',
   profile: false,
   bail: true,
   cache: false,
