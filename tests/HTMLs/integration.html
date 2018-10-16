@@ -10,6 +10,11 @@
   <body>
     <script src="../../dist/browser/index.js"></script>
     <script>
+    console.log('Nil UUID');
+    console.log(new bigUUID.UUID({
+      version: 'nil',
+    }).toString());
+
     console.log('Default (v4)');
     console.log(new bigUUID.UUID().toString());
     
