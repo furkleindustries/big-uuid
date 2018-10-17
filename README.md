@@ -19,8 +19,8 @@ console.log(v4.id);
 
 const v1 = new uuid.UUID({
   version: 1,
-  /* Optionally provide your own clockSequenceGetter,
-   * nodeIdentifierGetter, and/or timestampGetter. */
+  // Optionally provide your own clockSequenceGetter,
+  // nodeIdentifierGetter, and/or timestampGetter.
 });
 
 const v3 = new uuid.UUID({
