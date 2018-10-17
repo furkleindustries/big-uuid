@@ -85,14 +85,8 @@ export class UUID implements IUUID {
       throw new Error(strings.UUID_VERSION_INVALID);
     }
 
-    if (!isNode()) {
-      if (version.toString() === '1') {
-        console.error('The time-based version 1 UUID cannot be created ' +
-                      'within the browser. Falling back to the ' +
-                      'pseudo-random version 4.');
-
-        version = '4'; 
-      }
+    if (!isNode() && version.toString() === '1') {
+      throw new Error(strings.VERSION_1_IN_BROWSER);
     }
 
     this.__version = version;

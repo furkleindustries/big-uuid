@@ -74,6 +74,9 @@ export const strings = {
 
   NODE_IDENTIFIER_INVALID:
     'The nodeIdentifier property of the UUID object was malformed.',
+
+  VERSION_1_IN_BROWSER:
+    'Version 1 UUIDs cannot be constructed in the browser.',
 };
 
 export default strings;
