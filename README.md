@@ -37,6 +37,7 @@ const v5 = new uuid.UUID({
   /* One of the UUIDs from the standard or one of your making. */
   namespaceId: uuid.NamespaceIds.X500,
   name: 'test',
-});```
+});
+```
 
 In the browser, build the package (with `npm run build`) or install the package from npm and navigate to `node_modules/big-uuid`, then copy the `dist/browser/index.js` file and point the src of a script block to that file.
