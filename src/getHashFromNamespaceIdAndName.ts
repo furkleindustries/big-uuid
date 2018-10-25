@@ -1,12 +1,9 @@
 import {
-  createHash,
-} from 'crypto';
-import {
-  NamespaceIds,
-} from './Enums/NamespaceIds';
-import {
   strings,
 } from './strings';
+import {
+  TNamespaceId,
+} from './TypeAliases/TNamespaceId';
 import {
   TUUIDVersion,
 } from './TypeAliases/TUUIDVersion';
@@ -14,9 +11,13 @@ import {
   UUIDVersions,
 } from './Enums/UUIDVersions';
 
+const SHA1 = require('crypto-js/sha1');
+const MD5 = require('crypto-js/md5');
+const hex = require('crypto-js/enc-hex');
+
 export const getHashFromNamespaceIdAndName = (
   version: TUUIDVersion,
-  namespaceId: NamespaceIds,
+  namespaceId: TNamespaceId,
   name: string,
 ): string => {
   if (!namespaceId) {
@@ -30,21 +31,8 @@ export const getHashFromNamespaceIdAndName = (
   if (version.toString() === UUIDVersions.Three) {
     hash = MD5(toHash);
   } else {
-    hasher = createHash('sha1');
+    hash = SHA1(toHash);
   }
 
-  const bigEndianNamespaceId = namespaceId.split('-').map((segment) => {
-    const len = segment.length;
-    return parseInt(
-      parseInt(segment, 16)
-        .toString(2)
-        .split('')
-        .reverse()
-        .join(''),
-      2
-    ).toString(16).padEnd(len, '0');
-  }).join('-');
-
-  hasher.update(bigEndianNamespaceId + name);
-  return hasher.digest('hex');
+  return hex.stringify(hash);
 }

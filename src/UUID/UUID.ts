@@ -1,4 +1,7 @@
 import {
+  getHashFromNamespaceIdAndName,
+} from '../getHashFromNamespaceIdAndName';
+import {
   isNode,
 } from '../isNode';
 import {
@@ -10,9 +13,6 @@ import {
 import {
   IUUIDOptions,
 } from './UUIDOptions/IUUIDOptions';
-import {
-  numberAsLittleEndianHexStr,
-} from '../numberAsLittleEndianHexStr';
 import {
   strings,
 } from '../strings';
@@ -54,36 +54,36 @@ import {
  *          "A" / "B" / "C" / "D" / "E" / "F"
  */
 export class UUID implements IUUID {
-  constructor(options?: Partial<IUUIDOptions>) {
-    const opts = new UUIDOptions();
+  constructor(opts?: Partial<IUUIDOptions>) {
+    const options = new UUIDOptions();
 
-    if (typeof options === 'object' && options) {
-      if (options.version) {
-        opts.version = options.version;
+    if (opts && typeof opts === 'object') {
+      if (opts.version) {
+        options.version = opts.version;
       }
 
-      if (options.clockSequenceGetter) {
-        opts.clockSequenceGetter = options.clockSequenceGetter;
+      if (opts.clockSequenceGetter) {
+        options.clockSequenceGetter = opts.clockSequenceGetter;
       }
 
-      if (options.timestampGetter) {
-        opts.timestampGetter = options.timestampGetter;
+      if (opts.timestampGetter) {
+        options.timestampGetter = opts.timestampGetter;
       }
 
-      if (options.nodeIdentifierGetter) {
-        opts.nodeIdentifierGetter = options.nodeIdentifierGetter;
+      if (opts.nodeIdentifierGetter) {
+        options.nodeIdentifierGetter = opts.nodeIdentifierGetter;
       }
 
-      if (options.namespaceId) {
-        opts.namespaceId = options.namespaceId;
+      if (opts.namespaceId) {
+        options.namespaceId = opts.namespaceId;
       }
 
-      if (options.name) {
-        opts.name = options.name;
+      if (opts.name) {
+        options.name = opts.name;
       }
     }
 
-    let version = opts.version;
+    let version = options.version;
     if (!isUUIDVersion(version)) {
       throw new Error(strings.UUID_VERSION_INVALID);
     }
@@ -95,28 +95,37 @@ export class UUID implements IUUID {
     this.__version = version;
 
     if (/^[35]$/.test(version.toString())) {
+      if (!options.namespaceId) {
+        throw new Error(strings.NAMESPACE_ID_MISSING);
+      } else if (!options.name) {
+        throw new Error(strings.NAME_MISSING);
+      }
+
+      const hash = getHashFromNamespaceIdAndName(
+        version,
+        options.namespaceId,
+        options.name,
+      );
+
       /* Clock sequence is highly dependent on other values and their 
        * availability, so it should be generated first. */
-      const clockSequence = opts.clockSequenceGetter(
+      const clockSequence = options.clockSequenceGetter(
         version,
-        opts.namespaceId,
-        opts.name
+        hash,
       );
 
       this.__clockSequence = clockSequence;
       
-      const timestamp = opts.timestampGetter(
+      const timestamp = options.timestampGetter(
         version,
-        opts.namespaceId,
-        opts.name,
+        hash,
       );
       
       this.__timestamp = timestamp;
 
-      const nodeIdentifier = opts.nodeIdentifierGetter(
+      const nodeIdentifier = options.nodeIdentifierGetter(
         version,
-        opts.namespaceId,
-        opts.name,
+        hash,
       );
 
       this.__nodeIdentifier = nodeIdentifier;
@@ -127,13 +136,13 @@ export class UUID implements IUUID {
         [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ]
       );
     } else {
-      const clockSequence = opts.clockSequenceGetter(version);
+      const clockSequence = options.clockSequenceGetter(version);
       this.__clockSequence = clockSequence;
       
-      const timestamp = opts.timestampGetter(version);
+      const timestamp = options.timestampGetter(version);
       this.__timestamp = timestamp;
       
-      const nodeIdentifier = opts.nodeIdentifierGetter(version);
+      const nodeIdentifier = options.nodeIdentifierGetter(version);
       this.__nodeIdentifier = nodeIdentifier;
       
       if (isNode() && this.version.toString() === UUIDVersions.One) {
@@ -231,16 +240,9 @@ export class UUID implements IUUID {
       throw new Error(strings.UUID_STRING_INVALID);
     }
 
-    const leHexToBeHex = (leHex: string) => (
-      parseInt(
-        parseInt(leHex, 16).toString(2).split('').reverse().join(),
-        2
-      ).toString(16)
-    );
-
-    const timeLow = leHexToBeHex(split[0]);
-    const timeMid = leHexToBeHex(split[1]);
-    const timeHighAndVersion = leHexToBeHex(split[2]);
+    const timeLow = split[0];
+    const timeMid = split[1];
+    const timeHighAndVersion = split[2];
 
     const timeHigh = timeHighAndVersion.slice(0, 3);
     const version = timeHighAndVersion[4];
@@ -253,7 +255,7 @@ export class UUID implements IUUID {
 
     const timestamp = new Uint8Array(timestampArr);
 
-    const clockSequenceHighAndReservedAndLow = leHexToBeHex(split[3]);
+    const clockSequenceHighAndReservedAndLow = split[3];
     const clockSequenceHighAndReservedHex =
       clockSequenceHighAndReservedAndLow.slice(0, 2);
     const clockSequenceHighHex =
@@ -273,7 +275,7 @@ export class UUID implements IUUID {
 
     const clockSequence = new Uint8Array(clockSequenceArr);
 
-    const nodeIdentifierHex = leHexToBeHex(split[4]);
+    const nodeIdentifierHex = split[4];
     const nodeIdentifierArr = [];
     for (let ii = 0; ii < 12; ii += 2) {
       nodeIdentifierArr.push(parseInt(nodeIdentifierHex.slice(ii, ii + 2), 16));
@@ -291,9 +293,9 @@ export class UUID implements IUUID {
 
   toString(): string {
     const format = (value: Uint8Array, toPad: number) => (
-      numberAsLittleEndianHexStr(uintArrayAsNumber(value))
+      uintArrayAsNumber(value).toString(16)
         /* Pad any missing most-significant-digits. */
-        .padEnd(toPad, '0')
+        .padStart(toPad, '0')
     );
 
     return (

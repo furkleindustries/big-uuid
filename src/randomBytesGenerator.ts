@@ -12,7 +12,7 @@ export const randomBytesGenerator: (size: number) => Uint8Array = (() => {
     } else {
       // Browsers
       // @ts-ignore
-      const crypto = (crypto || msCrypto);
+      const crypto = (window.crypto || window.msCrypto);
       const QUOTA = 65536;
       const arr = new Uint8Array(size);
       for (var i = 0; i < size; i += QUOTA) {

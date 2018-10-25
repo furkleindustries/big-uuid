@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Integration test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+
+  <body>
+    <script src="../../dist/browser/index.js"></script>
+    <script>
+    console.log('Nil UUID');
+    console.log(new bigUUID.UUID({
+      version: 'nil',
+    }).toString());
+
+    console.log('Default (v4)');
+    console.log(new bigUUID.UUID().toString());
+    
+    console.log('v1');
+    console.log(new bigUUID.UUID({
+      version: 1,
+    }).toString());
+
+    console.log('v3');
+    console.log(new bigUUID.UUID({
+      version: 3,
+      namespaceId: bigUUID.NamespaceIds.URL,
+      name: 'test',
+    }).toString());
+
+    console.log('v5');
+    console.log(new bigUUID.UUID({
+      version: 5,
+      namespaceId: bigUUID.NamespaceIds.URL,
+      name: 'test',
+    }).toString());
+    </script>
+  </body>
+</html>

@@ -2,9 +2,6 @@ import {
   convertBinStrToUint8Array,
 } from './convertBinStrToUint8Array';
 import {
-  getHashFromNamespaceIdAndName,
-} from './getHashFromNamespaceIdAndName';
-import {
   getHundredsOfNanosecondsSinceGregorianReform,
 } from './getHundredsOfNanosecondsSinceGregorianReform';
 import {
@@ -13,9 +10,6 @@ import {
 import {
   lastResults,
 } from './lastResults';
-import {
-  NamespaceIds,
-} from './Enums/NamespaceIds';
 import {
   randomBytesGenerator,
 } from './randomBytesGenerator';
@@ -34,8 +28,7 @@ import {
 
 export function timestampGetter(
   version: TUUIDVersion,
-  namespaceId?: NamespaceIds,
-  name?: string,
+  hash?: string,
 ): Uint8Array
 {
   if (!isUUIDVersion(version)) {
@@ -53,6 +46,10 @@ export function timestampGetter(
     {
       /* Increment the clock sequence given that the timestamp is invalid. */
       lastResults.clockSequence[1] += 1;
+      if (lastResults.clockSequence[1] === 0) {
+        /* Increment the upper byte if the lower byte wrapped around. */
+        lastResults.clockSequence[0] += 1;
+      }
     }
 
     const timestampStr = currentTimestamp.toString(2).padStart(60, '0');
@@ -63,13 +60,11 @@ export function timestampGetter(
     }
 
     timestamp = new Uint8Array(inputArr);
-  } else if (/^[35]$/.test(version.toString())) {    
+  } else if (/^[35]$/.test(version.toString())) {
     /* Version is 3 or 5. */
-    const hash = getHashFromNamespaceIdAndName(
-      version,
-      namespaceId!,
-      name!,
-    );
+    if (!hash) {
+      throw new Error(strings.HASH_ARGUMENT_MISSING);
+    }
 
     let timestampStr = '';
     /* time_low */

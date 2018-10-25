@@ -8,9 +8,6 @@ import {
   IUUIDOptions,
 } from './IUUIDOptions';
 import {
-  NamespaceIds,
-} from '../../Enums/NamespaceIds';
-import {
   nodeIdentifierGetter,
 } from '../../nodeIdentifierGetter';
 import {
@@ -20,16 +17,19 @@ import {
   timestampGetter,
 } from '../../timestampGetter';
 import {
+  TNamespaceId,
+} from '../../TypeAliases/TNamespaceId';
+import {
   TUUIDVersion,
 } from '../../TypeAliases/TUUIDVersion';
 
 export class UUIDOptions implements IUUIDOptions {
   version: TUUIDVersion = '4';
+  namespaceId?: TNamespaceId;
+  name?: string;
   clockSequenceGetter = clockSequenceGetter;
   nodeIdentifierGetter = nodeIdentifierGetter;
   timestampGetter = timestampGetter;
-  name?: string;
-  namespaceId?: NamespaceIds;
 
   constructor(_args: { [key: string]: any } = {}) {
     const args = _args || {};
@@ -41,24 +41,24 @@ export class UUIDOptions implements IUUIDOptions {
       this.version = args.version;
     }
 
-    if (typeof args.clockSequenceGetter === 'function') {
+    if (args.clockSequenceGetter) {
       this.clockSequenceGetter = args.clockSequenceGetter;
     }
 
-    if (typeof args.nodeIdentifierGetter === 'function') {
+    if (args.nodeIdentifierGetter) {
       this.nodeIdentifierGetter = args.nodeIdentifierGetter; 
     }
 
-    if (typeof args.timestampGetter === 'function') {
+    if (args.timestampGetter) {
       this.timestampGetter = args.timestampGetter;
     }
 
-    if (args.name && typeof args.name === 'string') {
-      this.name = args.name;
+    if (args.namespaceId) {
+      this.namespaceId = args.namespaceId;
     }
 
-    if (args.namespaceId && typeof args.namespaceId === 'string') {
-      this.namespaceId = args.namespaceId as NamespaceIds;
+    if (args.name) {
+      this.namespaceId = args.namespaceId;
     }
 
     if (/^[35]$/.test(this.version.toString())) {

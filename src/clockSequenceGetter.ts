@@ -2,17 +2,11 @@ import {
   convertBinStrToUint8Array,
 } from './convertBinStrToUint8Array';
 import {
-  getHashFromNamespaceIdAndName,
-} from './getHashFromNamespaceIdAndName';
-import {
   isUUIDVersion,
 } from './TypeGuards/isUUIDVersion';
 import {
   lastResults,
 } from './lastResults';
-import {
-  NamespaceIds,
-} from './Enums/NamespaceIds';
 import {
   randomBytesGenerator,
 } from './randomBytesGenerator';
@@ -31,8 +25,7 @@ import {
 
 export function clockSequenceGetter(
   version: TUUIDVersion,
-  namespaceId?: NamespaceIds,
-  name?: string,
+  hash?: string,
 ): Uint8Array
 {
   if (!isUUIDVersion(version)) {
@@ -64,11 +57,9 @@ export function clockSequenceGetter(
     }
   } else {
     /* Version is 3 or 5. */
-    const hash = getHashFromNamespaceIdAndName(
-      version,
-      namespaceId!,
-      name!,
-    );
+    if (!hash) {
+      throw new Error(strings.HASH_ARGUMENT_MISSING);
+    }
 
     let clockSequenceStr = '';
     

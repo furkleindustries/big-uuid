@@ -1,21 +1,22 @@
 {
   "name": "big-uuid",
-  "version": "0.1.0",
+  "version": "0.4.4",
   "description": "An RFC 4112 conformant UUID generator creating v1, v3, v4, and v5 UUIDs.",
   "main": "dist/node.es6/index.js",
+  "browser": "dist/browser/index.js",
   "types": "src/index.d.ts",
   "scripts": {
-    "build": "npm run build-node && npm run build-browser && npm run build-declaration-file",
-    "build-node": "npm run build-node-esnext && npm run build-node-es6 && npm run build-node-es5",
-    "build-node-esnext": "tsc --project tsconfig.esnext.json",
+    "build": "cross-env NODE_ENV=production npm run build-node && npm run build-browser && npm run copy-declaration-file",
+    "build-node": "npm run build-node-esnext && npm run build-node-es6",
+    "build-node-esnext": "tsc",
     "build-node-es6": "tsc --project tsconfig.es6.json",
-    "build-node-es5": "tsc --project tsconfig.es5.json",
-    "build-declaration-file": "tsc --project tsconfig.d.json && copy dist\\node.esnext\\index.d.ts src\\ && copy src\\index.d.ts dist\\node.es6 && copy src\\index.d.ts dist\\node.es5",
-    "build-browser": "webpack --display-modules",
-    "test": "jest",
-    "test-coverage": "jest --coverage",
-    "test-watch": "jest --watch",
-    "test-coverage-watch": "jest --watch --coverage"
+    "copy-declaration-file": "copy dist\\node.esnext\\index.d.ts src\\",
+    "build-browser": "cross-env NODE_ENV=production webpack -p",
+    "build-browser:dev": "cross-env NODE_ENV=development webpack",
+    "test": "cross-env NODE_ENV=test jest",
+    "test-coverage": "npm run test -- --coverage",
+    "test-watch": "npm run test -- --watch",
+    "test-coverage-watch": "npm run test -- --watch --coverage"
   },
   "repository": {
     "type": "git",
@@ -32,19 +33,38 @@
   },
   "homepage": "https://github.com/furkleindustries/big-uuid#readme",
   "devDependencies": {
-    "@types/node": "^8.10.34",
-    "babel-cli": "^6.26.0",
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "@types/crypto-js": "^3.1.43",
+    "@types/jest": "^23.3.5",
+    "@types/node": "^10.11.7",
     "babel-env": "^2.4.1",
-    "babel-jest": "^21.2.0",
-    "babel-loader": "^7.1.2",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
-    "babel-plugin-transform-object-assign": "^6.22.0",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-minify": "^0.2.0",
-    "jest": "^21.2.1",
-    "ts-jest": "^21.2.4",
-    "typescript": "^2.6.2",
-    "uglifyjs-webpack-plugin": "^1.1.4",
-    "webpack": "^3.10.0"
+    "babel-jest": "^23.6.0",
+    "babel-loader": "^8.0.4",
+    "babel-preset-jest": "^23.2.0",
+    "cross-env": "^5.2.0",
+    "jest": "^23.6.0",
+    "ts-jest": "^23.10.4",
+    "typescript": "^3.1.3",
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.2"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "ts",
+      "tsx"
+    ],
+    "testMatch": [
+      "**/tests/**/*.test.{j,t}s?(x)"
+    ],
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest",
+      "^.+\\.tsx?$": "ts-jest"
+    }
+  },
+  "dependencies": {
+    "crypto-js": "^3.1.9-1"
   }
 }

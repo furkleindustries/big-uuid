@@ -1,10 +1,10 @@
 export const strings = {
-  BIT_ARRAY_INVALID:
-    'The array of bits was not an array, had no contents, or had one or ' +
-    'more items which did not meet the isBit type guard.',
-
   UUID_VERSION_INVALID:
     'The version argument was not a valid UUID version.',
+
+  HASH_ARGUMENT_MISSING:
+  'The hash argument was not provided, without which a v3 or v5 UUID ' +
+  'cannot be created.',
 
   TIMESTAMP_GENERATION_FAILED:
     'The random number generator did not produce an acceptable value for ' +
@@ -74,4 +74,9 @@ export const strings = {
 
   NODE_IDENTIFIER_INVALID:
     'The nodeIdentifier property of the UUID object was malformed.',
+
+  VERSION_1_IN_BROWSER:
+    'Version 1 UUIDs cannot be constructed in the browser.',
 };
+
+export default strings;

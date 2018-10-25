@@ -2,17 +2,11 @@ import {
   convertBinStrToUint8Array,
 } from './convertBinStrToUint8Array';
 import {
-  getHashFromNamespaceIdAndName,
-} from './getHashFromNamespaceIdAndName';
-import {
   getMAC,
 } from './getMAC';
 import {
   lastResults,
 } from './lastResults';
-import {
-  NamespaceIds,
-} from './Enums/NamespaceIds';
 import {
   randomBytesGenerator,
 } from './randomBytesGenerator';
@@ -28,8 +22,7 @@ import {
 
 export function nodeIdentifierGetter(
   version: TUUIDVersion,
-  namespaceId?: NamespaceIds,
-  name?: string,
+  hash?: string,
 ): Uint8Array
 {
   let nodeIdentifier: Uint8Array;
@@ -43,19 +36,24 @@ export function nodeIdentifierGetter(
     nodeIdentifier = getMAC();
     lastResults.nodeIdentifier = nodeIdentifier;
   } else if (/^[35]$/.test(version.toString())) {
-    const hash = getHashFromNamespaceIdAndName(
-      version,
-      namespaceId!,
-      name!,
-    );
+    if (!hash) {
+      throw new Error(strings.HASH_ARGUMENT_MISSING);
+    }
 
     let nodeIdentifierStr = '';
     
     /* node_identifier */
     nodeIdentifierStr += hash.slice(20, 32);
-    const nodeIdentifierBinStr = parseInt(nodeIdentifierStr, 16)
+    let nodeIdentifierBinStr = parseInt(nodeIdentifierStr, 16)
       .toString(2)
       .padStart(48, '0');
+
+    /* Set the unicast/multicast bit (the least significant bit in the first
+     * byte) to 1, for multicast. */
+    nodeIdentifierBinStr =
+      nodeIdentifierBinStr.slice(0, 7) +
+      '1' +
+      nodeIdentifierBinStr.slice(8); 
 
     nodeIdentifier = convertBinStrToUint8Array(nodeIdentifierBinStr);
   } else if (version.toString() === UUIDVersions.Four) {
