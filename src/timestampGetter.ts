@@ -28,6 +28,9 @@ import {
 import {
   uintArrayAsNumber,
 } from './uintArrayAsNumber';
+import {
+  UUIDVersions,
+} from './Enums/UUIDVersions';
 
 export function timestampGetter(
   version: TUUIDVersion,
@@ -40,7 +43,7 @@ export function timestampGetter(
   }
   
   let timestamp: Uint8Array;
-  if (version.toString() === '1') {
+  if (version.toString() === UUIDVersions.One) {
     const oldTimestamp = lastResults.timestamp;
     const currentTimestamp = getHundredsOfNanosecondsSinceGregorianReform();
     /* Check if the last recorded timestamp is after the current time. */

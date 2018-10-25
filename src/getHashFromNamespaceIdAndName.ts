@@ -10,6 +10,9 @@ import {
 import {
   TUUIDVersion,
 } from './TypeAliases/TUUIDVersion';
+import {
+  UUIDVersions,
+} from './Enums/UUIDVersions';
 
 export const getHashFromNamespaceIdAndName = (
   version: TUUIDVersion,
@@ -22,9 +25,10 @@ export const getHashFromNamespaceIdAndName = (
     throw new Error(strings.NAME_MISSING);
   }
 
-  let hasher;
-  if (version.toString() === '3') {
-    hasher = createHash('md5');
+  const toHash = namespaceId + name;
+  let hash;
+  if (version.toString() === UUIDVersions.Three) {
+    hash = MD5(toHash);
   } else {
     hasher = createHash('sha1');
   }

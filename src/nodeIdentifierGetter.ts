@@ -22,6 +22,9 @@ import {
 import {
   TUUIDVersion,
 } from './TypeAliases/TUUIDVersion';
+import {
+  UUIDVersions,
+} from './Enums/UUIDVersions';
 
 export function nodeIdentifierGetter(
   version: TUUIDVersion,
@@ -30,7 +33,7 @@ export function nodeIdentifierGetter(
 ): Uint8Array
 {
   let nodeIdentifier: Uint8Array;
-  if (version.toString() === '1') { /* Create the node ID from the system time. */
+  if (version.toString() === UUIDVersions.One) { /* Create the node ID from the system time. */
     if (lastResults.nodeIdentifier &&
         'BYTES_PER_ELEMENT' in lastResults.nodeIdentifier)
     {
@@ -55,7 +58,7 @@ export function nodeIdentifierGetter(
       .padStart(48, '0');
 
     nodeIdentifier = convertBinStrToUint8Array(nodeIdentifierBinStr);
-  } else if (version.toString() === '4') {
+  } else if (version.toString() === UUIDVersions.Four) {
     nodeIdentifier = randomBytesGenerator(6);
   } else {
     throw new Error(strings.UUID_VERSION_INVALID);

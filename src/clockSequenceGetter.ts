@@ -25,6 +25,9 @@ import {
 import {
   uintArrayAsNumber,
 } from './uintArrayAsNumber';
+import {
+  UUIDVersions,
+} from './Enums/UUIDVersions';
 
 export function clockSequenceGetter(
   version: TUUIDVersion,
@@ -55,7 +58,7 @@ export function clockSequenceGetter(
       return lastResults.clockSequence;
     } else {
       clockSequence = getRandomSeq();
-      if (version.toString() === '1') {
+      if (version.toString() === UUIDVersions.One) {
         lastResults.clockSequence = clockSequence;
       }
     }

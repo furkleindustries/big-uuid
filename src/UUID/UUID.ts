@@ -26,6 +26,9 @@ import {
   UUIDOptions,
 } from './UUIDOptions/UUIDOptions';
 import {
+  UUIDVersions,
+} from '../Enums/UUIDVersions';
+import {
   writeNewResults,
 } from '../writeNewResults';
 
@@ -85,14 +88,8 @@ export class UUID implements IUUID {
       throw new Error(strings.UUID_VERSION_INVALID);
     }
 
-    if (!isNode()) {
-      if (version.toString() === '1') {
-        console.error('The time-based version 1 UUID cannot be created ' +
-                      'within the browser. Falling back to the ' +
-                      'pseudo-random version 4.');
-
-        version = '4'; 
-      }
+    if (!isNode() && version.toString() === UUIDVersions.One) {
+      throw new Error(strings.VERSION_1_IN_BROWSER);
     }
 
     this.__version = version;
@@ -123,6 +120,12 @@ export class UUID implements IUUID {
       );
 
       this.__nodeIdentifier = nodeIdentifier;
+    } else if (version.toString() === UUIDVersions.Nil) {
+      this.__clockSequence = new Uint8Array([ 0, 0, ]);
+      this.__timestamp = new Uint8Array([ 0, 0, 0, 0, 0, 0, 0, 0, ]);
+      this.__nodeIdentifier = new Uint8Array(
+        [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ]
+      );
     } else {
       const clockSequence = opts.clockSequenceGetter(version);
       this.__clockSequence = clockSequence;
@@ -133,7 +136,7 @@ export class UUID implements IUUID {
       const nodeIdentifier = opts.nodeIdentifierGetter(version);
       this.__nodeIdentifier = nodeIdentifier;
       
-      if (isNode() && this.version.toString() === '1') {
+      if (isNode() && this.version.toString() === UUIDVersions.One) {
         writeNewResults(this);
       }
     }
@@ -174,7 +177,10 @@ export class UUID implements IUUID {
   /* 2 bytes */
   get timeHighAndVersion(): Uint8Array {
     const timeHigh = this.timeHigh;
-    const version = parseInt(this.version.toString()).toString(2);
+    const version = this.version.toString() === UUIDVersions.Nil ?
+      '0' :
+      parseInt(this.version.toString()).toString(2);
+
     const timeHighNum = uintArrayAsNumber(timeHigh).toString(2);
     const binStr = version.padStart(4, '0') + timeHighNum.padStart(12, '0');
     const firstByte = parseInt(binStr.slice(0, 8), 2);
@@ -204,7 +210,10 @@ export class UUID implements IUUID {
 
   get clockSequenceHighAndReserved(): Uint8Array {
     const clockHigh = uintArrayAsNumber(this.clockSequenceHigh).toString(2);
-    const reserved = uintArrayAsNumber(this.reserved).toString(2);
+    const reserved = this.version.toString() === UUIDVersions.Nil ?
+      '0' :
+      uintArrayAsNumber(this.reserved).toString(2);
+
     const byte = clockHigh.padStart(6, '0') + reserved.padStart(2, '0');
     return new Uint8Array([ parseInt(byte, 2), ]);
   }
