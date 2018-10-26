@@ -1,10 +1,10 @@
-
 import {
   IUUID,
 } from '../UUID/IUUID';
 
-export function isUUID(maybe: any): maybe is IUUID {
-  return typeof maybe === 'object' &&
+export const isUUID = (maybe: any): maybe is IUUID => (
+  Boolean(
+    typeof maybe === 'object' &&
     maybe &&
     maybe.version &&
     maybe.timestamp &&
@@ -16,7 +16,8 @@ export function isUUID(maybe: any): maybe is IUUID {
     maybe.clockSequenceHighAndReserved &&
     maybe.clockSequenceLow &&
     maybe.nodeIdentifier &&
-    typeof maybe.toString === 'function';
-}
+    typeof maybe.toString === 'function'
+  )
+);
 
 export default isUUID;

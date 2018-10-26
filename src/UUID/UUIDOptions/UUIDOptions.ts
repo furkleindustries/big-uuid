@@ -22,16 +22,19 @@ import {
 import {
   TUUIDVersion,
 } from '../../TypeAliases/TUUIDVersion';
+import {
+  UUIDVersions,
+} from '../../Enums/UUIDVersions';
 
 export class UUIDOptions implements IUUIDOptions {
-  version: TUUIDVersion = '4';
+  version: TUUIDVersion = UUIDVersions.Four;
   namespaceId?: TNamespaceId;
   name?: string;
   clockSequenceGetter = clockSequenceGetter;
   nodeIdentifierGetter = nodeIdentifierGetter;
   timestampGetter = timestampGetter;
 
-  constructor(_args: { [key: string]: any } = {}) {
+  constructor(_args: Partial<IUUIDOptions> = {}) {
     const args = _args || {};
     if (args.version) {
       if (!isUUIDVersion(args.version)) {
@@ -41,30 +44,28 @@ export class UUIDOptions implements IUUIDOptions {
       this.version = args.version;
     }
 
-    if (args.clockSequenceGetter) {
+    if (typeof args.clockSequenceGetter === 'function') {
       this.clockSequenceGetter = args.clockSequenceGetter;
     }
 
-    if (args.nodeIdentifierGetter) {
+    if (typeof args.nodeIdentifierGetter === 'function') {
       this.nodeIdentifierGetter = args.nodeIdentifierGetter; 
     }
 
-    if (args.timestampGetter) {
+    if (typeof args.timestampGetter === 'function') {
       this.timestampGetter = args.timestampGetter;
     }
-
-    if (args.namespaceId) {
-      this.namespaceId = args.namespaceId;
-    }
-
-    if (args.name) {
-      this.namespaceId = args.namespaceId;
-    }
-
+    
     if (/^[35]$/.test(this.version.toString())) {
-      if (!this.namespaceId) {
+      if (args.namespaceId) {
+        this.namespaceId = args.namespaceId;
+      } else {
         throw new Error(strings.NAMESPACE_ID_MISSING);
-      } else if (!this.name) {
+      }
+  
+      if (args.name) {
+        this.name = args.name;
+      } else {
         throw new Error(strings.NAME_MISSING);
       }
     }

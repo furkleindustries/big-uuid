@@ -7,6 +7,9 @@ import {
 import {
   TUUIDVersion,
 } from './TypeAliases/TUUIDVersion';
+import {
+  UUIDVersions,
+} from './Enums/UUIDVersions';
 
 const SHA1 = require('crypto-js/sha1');
 const MD5 = require('crypto-js/md5');
@@ -25,7 +28,7 @@ export const getHashFromNamespaceIdAndName = (
 
   const toHash = namespaceId + name;
   let hash;
-  if (version.toString() === '3') {
+  if (version.toString() === UUIDVersions.Three) {
     hash = MD5(toHash);
   } else {
     hash = SHA1(toHash);

@@ -18,7 +18,7 @@ export const lastResults: TUUIDLastResults = (() => {
   let lastResults: TUUIDLastResults | null = null;
   try {
     const fileStr = readFileSync(join(homedir(), 'ifid'), 'utf8');
-    lastResults = JSON.parse(fileStr);
+    lastResults = JSON.parse(fileStr) as TUUIDLastResults;
   } catch (e) { /* Do nothing. */ }
 
   if (isValidLastResults(lastResults)) {

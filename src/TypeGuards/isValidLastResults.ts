@@ -2,15 +2,17 @@ import {
   TUUIDLastResults,
 } from '../TypeAliases/TUUIDLastResults';
 
-export function isValidLastResults(maybe: any): maybe is TUUIDLastResults {
-  return typeof maybe === 'object' &&
+export const isValidLastResults = (maybe: any): maybe is TUUIDLastResults => (
+  Boolean(
+    typeof maybe === 'object' &&
     maybe &&
-    maybe.clockSequence &&
-    'BYTES_PER_ELEMENT' in maybe.clockSequence &&
-    maybe.nodeIdentifier &&
-    'BYTES_PER_ELEMENT' in maybe.nodeIdentifier &&
-    maybe.timestamp &&
-    'BYTES_PER_ELEMENT' in maybe.timestamp;
-}
+    Array.isArray(maybe.clockSequence) &&
+    maybe.clockSequence.length === 2 &&
+    Array.isArray(maybe.nodeIdentifier) &&
+    maybe.nodeIdentifier.length === 8 &&
+    Array.isArray(maybe.timestamp) &&
+    maybe.timestamp.length === 6
+  )
+);
 
 export default isValidLastResults;

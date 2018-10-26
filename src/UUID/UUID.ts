@@ -26,6 +26,9 @@ import {
   UUIDOptions,
 } from './UUIDOptions/UUIDOptions';
 import {
+  UUIDVersions,
+} from '../Enums/UUIDVersions';
+import {
   writeNewResults,
 } from '../writeNewResults';
 
@@ -85,7 +88,7 @@ export class UUID implements IUUID {
       throw new Error(strings.UUID_VERSION_INVALID);
     }
 
-    if (!isNode() && version.toString() === '1') {
+    if (!isNode() && version.toString() === UUIDVersions.One) {
       throw new Error(strings.VERSION_1_IN_BROWSER);
     }
 
@@ -126,7 +129,7 @@ export class UUID implements IUUID {
       );
 
       this.__nodeIdentifier = nodeIdentifier;
-    } else if (/^nil$/i.test(version.toString())) {
+    } else if (version.toString() === UUIDVersions.Nil) {
       this.__clockSequence = new Uint8Array([ 0, 0, ]);
       this.__timestamp = new Uint8Array([ 0, 0, 0, 0, 0, 0, 0, 0, ]);
       this.__nodeIdentifier = new Uint8Array(
@@ -142,7 +145,7 @@ export class UUID implements IUUID {
       const nodeIdentifier = options.nodeIdentifierGetter(version);
       this.__nodeIdentifier = nodeIdentifier;
       
-      if (isNode() && this.version.toString() === '1') {
+      if (isNode() && this.version.toString() === UUIDVersions.One) {
         writeNewResults(this);
       }
     }
@@ -183,7 +186,7 @@ export class UUID implements IUUID {
   /* 2 bytes */
   get timeHighAndVersion(): Uint8Array {
     const timeHigh = this.timeHigh;
-    const version = /^nil$/i.test(this.version.toString()) ?
+    const version = this.version.toString() === UUIDVersions.Nil ?
       '0' :
       parseInt(this.version.toString()).toString(2);
 
@@ -216,7 +219,7 @@ export class UUID implements IUUID {
 
   get clockSequenceHighAndReserved(): Uint8Array {
     const clockHigh = uintArrayAsNumber(this.clockSequenceHigh).toString(2);
-    const reserved = /^nil$/i.test(this.version.toString()) ?
+    const reserved = this.version.toString() === UUIDVersions.Nil ?
       '0' :
       uintArrayAsNumber(this.reserved).toString(2);
 
