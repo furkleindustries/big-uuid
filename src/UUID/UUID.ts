@@ -54,32 +54,35 @@ import {
  *          "A" / "B" / "C" / "D" / "E" / "F"
  */
 export class UUID implements IUUID {
-  constructor(opts?: Partial<IUUIDOptions>) {
+  constructor(argOptions?: Partial<IUUIDOptions>) {
     const options = new UUIDOptions();
 
-    if (opts && typeof opts === 'object') {
-      if (opts.version) {
-        options.version = opts.version;
+    if (argOptions && typeof argOptions === 'object') {
+      /* istanbul ignore else */
+      if (argOptions.version) {
+        options.version = argOptions.version;
       }
 
-      if (opts.clockSequenceGetter) {
-        options.clockSequenceGetter = opts.clockSequenceGetter;
+      if (typeof argOptions.clockSequenceGetter === 'function') {
+        options.clockSequenceGetter = argOptions.clockSequenceGetter;
       }
 
-      if (opts.timestampGetter) {
-        options.timestampGetter = opts.timestampGetter;
+      if (typeof argOptions.timestampGetter === 'function') {
+        options.timestampGetter = argOptions.timestampGetter;
       }
 
-      if (opts.nodeIdentifierGetter) {
-        options.nodeIdentifierGetter = opts.nodeIdentifierGetter;
+      if (typeof argOptions.nodeIdentifierGetter === 'function') {
+        options.nodeIdentifierGetter = argOptions.nodeIdentifierGetter;
       }
 
-      if (opts.namespaceId) {
-        options.namespaceId = opts.namespaceId;
-      }
-
-      if (opts.name) {
-        options.name = opts.name;
+      if (/^[35]$/.test(options.version.toString())) {
+        if (argOptions.namespaceId) {
+          options.namespaceId = argOptions.namespaceId;
+        }
+  
+        if (argOptions.name) {
+          options.name = argOptions.name;
+        }
       }
     }
 
@@ -136,21 +139,21 @@ export class UUID implements IUUID {
         [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ]
       );
     } else {
+      /* v1 and v4 */
       const clockSequence = options.clockSequenceGetter(version);
       this.__clockSequence = clockSequence;
-      
+
       const timestamp = options.timestampGetter(version);
       this.__timestamp = timestamp;
-      
+
       const nodeIdentifier = options.nodeIdentifierGetter(version);
       this.__nodeIdentifier = nodeIdentifier;
-      
+
       if (isNode() && this.version.toString() === UUIDVersions.One) {
+        /* Obviously we can't serialize state to file in the browser. */
         writeNewResults(this);
       }
     }
-
-    /* Obviously we can't serialize state to file in the browser. */
   }
 
   /* Parsed into 4 bits. */
@@ -188,6 +191,7 @@ export class UUID implements IUUID {
     const timeHigh = this.timeHigh;
     const version = this.version.toString() === UUIDVersions.Nil ?
       '0' :
+      /* istanbul ignore next */
       parseInt(this.version.toString()).toString(2);
 
     const timeHighNum = uintArrayAsNumber(timeHigh).toString(2);
@@ -213,6 +217,8 @@ export class UUID implements IUUID {
     return this.clockSequence.slice(1);
   }
 
+  /* asssa. */
+  /* istanbul ignore next */
   get reserved(): Uint8Array {
     return new Uint8Array([ 2, ]);
   }
@@ -221,6 +227,7 @@ export class UUID implements IUUID {
     const clockHigh = uintArrayAsNumber(this.clockSequenceHigh).toString(2);
     const reserved = this.version.toString() === UUIDVersions.Nil ?
       '0' :
+      /* istanbul ignore next */
       uintArrayAsNumber(this.reserved).toString(2);
 
     const byte = clockHigh.padStart(6, '0') + reserved.padStart(2, '0');
@@ -245,8 +252,10 @@ export class UUID implements IUUID {
     const timeHighAndVersion = split[2];
 
     const timeHigh = timeHighAndVersion.slice(0, 3);
-    const version = timeHighAndVersion[4];
-
+    const version = timeHighAndVersion[3] === '0' ?
+      UUIDVersions.Nil :
+      /* istanbul ignore next */
+      timeHighAndVersion[3];
     const timestampHex = timeHigh + timeMid + timeLow;
     const timestampArr = [];
     for (let ii = 0; ii < 16; ii += 2) {
@@ -283,12 +292,29 @@ export class UUID implements IUUID {
 
     const nodeIdentifier = new Uint8Array(nodeIdentifierArr);
 
-    return Object.assign({}, this.prototype, {
+    const obj = {
       __version: version,
+      get version() {
+        return obj.__version;
+      },
+
       __timestamp: timestamp,
+      get timestamp() {
+        return obj.__timestamp;
+      },
+
       __clockSequence: clockSequence,
+      get clockSequence() {
+        return obj.__clockSequence;
+      },
+
       __nodeIdentifier: nodeIdentifier,
-    });
+      get nodeIdentifier() {
+        return obj.__nodeIdentifier;
+      },
+    };
+
+    return Object.assign({}, this.prototype, obj);
   }
 
   toString(): string {
