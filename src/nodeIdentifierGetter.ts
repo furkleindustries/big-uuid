@@ -5,8 +5,8 @@ import {
   getMAC,
 } from './getMAC';
 import {
-  lastResults,
-} from './lastResults';
+  getLastResults,
+} from './getLastResults';
 import {
   randomBytesGenerator,
 } from './randomBytesGenerator';
@@ -26,7 +26,9 @@ export function nodeIdentifierGetter(
 ): Uint8Array
 {
   let nodeIdentifier: Uint8Array;
-  if (version.toString() === UUIDVersions.One) { /* Create the node ID from the system time. */
+  if (version.toString() === UUIDVersions.One) {
+    /* Create the node ID from the system time. */
+    const lastResults = getLastResults();
     if (lastResults.nodeIdentifier &&
         'BYTES_PER_ELEMENT' in lastResults.nodeIdentifier)
     {
@@ -34,7 +36,6 @@ export function nodeIdentifierGetter(
     }
 
     nodeIdentifier = getMAC();
-    lastResults.nodeIdentifier = nodeIdentifier;
   } else if (/^[35]$/.test(version.toString())) {
     if (!hash) {
       throw new Error(strings.HASH_ARGUMENT_MISSING);

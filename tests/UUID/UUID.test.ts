@@ -190,12 +190,7 @@ describe('UUID tests.', () => {
     ]);
   });
 
-  it('Calls writeNewResults with the UUID as the argument if isNode is true and the version is 1.', () => {
-    const uuid = new UUID({ version: UUIDVersions.One, });
-    expect((writeNewResults as any).mock.calls).toEqual([
-      [ uuid, ],
-    ]);
-  });
+  /* TODO: add writeNewResults and clock sequence edge case tests. */
 
   it('Calls getHashFromNamespaceId with argOptions.namespaceId and argOptions.name if it is truthy and the version is 3.', () => {
     new UUID({

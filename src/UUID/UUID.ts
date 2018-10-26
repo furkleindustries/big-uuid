@@ -2,6 +2,9 @@ import {
   getHashFromNamespaceIdAndName,
 } from '../getHashFromNamespaceIdAndName';
 import {
+  getLastResults,
+} from '../getLastResults';
+import {
   isNode,
 } from '../isNode';
 import {
@@ -140,18 +143,60 @@ export class UUID implements IUUID {
       );
     } else {
       /* v1 and v4 */
-      const clockSequence = options.clockSequenceGetter(version);
-      this.__clockSequence = clockSequence;
+      const ts = options.timestampGetter(version);
+      this.__timestamp = ts;
 
-      const timestamp = options.timestampGetter(version);
-      this.__timestamp = timestamp;
-
-      const nodeIdentifier = options.nodeIdentifierGetter(version);
-      this.__nodeIdentifier = nodeIdentifier;
-
+      const ni = options.nodeIdentifierGetter(version);
+      this.__nodeIdentifier = ni;
+      
+      /* Obviously we can't serialize state to file in the browser. */
       if (isNode() && this.version.toString() === UUIDVersions.One) {
-        /* Obviously we can't serialize state to file in the browser. */
-        writeNewResults(this);
+        const lastResults = getLastResults();
+        if (uintArrayAsNumber(lastResults.nodeIdentifier) !== uintArrayAsNumber(ni)) {
+          /* Create a random clock sequence if the node identifier has changed. */ 
+          const cs = options.clockSequenceGetter(UUIDVersions.Four);
+          this.__clockSequence = cs;
+        } else {
+          const cs = options.clockSequenceGetter(this.version);
+          this.__clockSequence = cs;
+        }
+
+        let shouldWrite = false;
+        if (!lastResults) {
+          shouldWrite = true;
+        } else {
+          const oldTimestamp = lastResults.timestamp;
+          const oldClockSequence = lastResults.clockSequence;
+          /* Check if the last recorded timestamp is after the current time. */
+          if ((oldTimestamp && 'BYTES_PER_ELEMENT' in oldTimestamp) &&
+              (oldClockSequence && 'BYTES_PER_ELEMENT' in oldClockSequence))
+          {
+            const oldTimeInt = uintArrayAsNumber(oldTimestamp);
+            const newTimeInt = uintArrayAsNumber(this.timestamp);
+            if (oldTimeInt.greater(newTimeInt)) {
+              /* Increment the clock sequence given that the timestamp is invalid. */
+              this.__clockSequence[1] += 1;
+              if (this.__clockSequence[1] === 0) {
+                /* Increment the upper byte if the lower byte wrapped around. */
+                this.__clockSequence[0] += 1;
+              }
+            }
+
+            shouldWrite = true;
+          } else if (
+            uintArrayAsNumber(this.clockSequence).equals(uintArrayAsNumber(lastResults.clockSequence)) ||
+            uintArrayAsNumber(this.nodeIdentifier).equals(uintArrayAsNumber(lastResults.nodeIdentifier)))
+          {
+            shouldWrite = true;
+          }
+        }
+
+        if (shouldWrite) {
+          writeNewResults(this);
+        }
+      } else {
+        const clockSequence = options.clockSequenceGetter(version);
+        this.__clockSequence = clockSequence;
       }
     }
   }
@@ -217,7 +262,7 @@ export class UUID implements IUUID {
     return this.clockSequence.slice(1);
   }
 
-  /* asssa. */
+  /* 4 bits. */
   /* istanbul ignore next */
   get reserved(): Uint8Array {
     return new Uint8Array([ 2, ]);

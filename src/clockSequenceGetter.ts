@@ -5,8 +5,8 @@ import {
   isUUIDVersion,
 } from './TypeGuards/isUUIDVersion';
 import {
-  lastResults,
-} from './lastResults';
+  getLastResults,
+} from './getLastResults';
 import {
   randomBytesGenerator,
 } from './randomBytesGenerator';
@@ -23,10 +23,10 @@ import {
   UUIDVersions,
 } from './Enums/UUIDVersions';
 
-export function clockSequenceGetter(
+export const clockSequenceGetter = (
   version: TUUIDVersion,
   hash?: string,
-): Uint8Array
+): Uint8Array =>
 {
   if (!isUUIDVersion(version)) {
     throw new Error(strings.UUID_VERSION_INVALID);
@@ -43,17 +43,21 @@ export function clockSequenceGetter(
         parseInt(clockSequenceBin.slice(0, 6), 2),
         parseInt(clockSequenceBin.slice(6), 2),
       ]);
-    }
+    };
 
-    if (lastResults.clockSequence &&
+    const lastResults = (() => {
+      if (version.toString() === UUIDVersions.One) {
+        return getLastResults();
+      }
+    })();
+
+    if (lastResults &&
+        lastResults.clockSequence &&
         'BYTES_PER_ELEMENT' in lastResults.clockSequence)
     {
       return lastResults.clockSequence;
     } else {
       clockSequence = getRandomSeq();
-      if (version.toString() === UUIDVersions.One) {
-        lastResults.clockSequence = clockSequence;
-      }
     }
   } else {
     /* Version is 3 or 5. */
