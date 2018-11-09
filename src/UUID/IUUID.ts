@@ -1,6 +1,6 @@
 import {
-  TUUIDVersion,
-} from '../TypeAliases/TUUIDVersion';
+  UUIDVersions,
+} from '../Enums/UUIDVersions';
 
 /* The formal Augmented Backus-Naur Form grammar for UUIDs is as follows,
  * courtesy RFC-4112:
@@ -25,42 +25,39 @@ import {
  */
 export interface IUUID {
   /* Parsed into 4 bits. */
-  readonly version:                      TUUIDVersion;
+  readonly version: UUIDVersions;
 
   /* 60 bits */
-  readonly timestamp:                    Uint8Array;
+  readonly timestamp: Uint8Array;
 
   /* 4 bytes */
-  readonly timeLow:                      Uint8Array;
+  readonly timeLow: Uint8Array;
 
   /* 2 bytes */
-  readonly timeMid:                      Uint8Array;
+  readonly timeMid: Uint8Array;
 
   /* 12 bits */
-  readonly timeHigh:                     Uint8Array;
-
-  /* 2 bytes */
-  readonly timeHighAndVersion:           Uint8Array;
+  readonly timeHigh: Uint8Array;
 
   /* 14 bits */
-  readonly clockSequence:                Uint8Array;
+  readonly clockSequence: Uint8Array;
 
   /* 1 byte */
   readonly clockSequenceHighAndReserved: Uint8Array;
 
   /* 1 byte */
-  readonly clockSequenceLow:             Uint8Array;
+  readonly clockSequenceLow: Uint8Array;
 
   /* 6 bits */
-  readonly clockSequenceHigh:            Uint8Array;
+  readonly clockSequenceHigh: Uint8Array;
 
   /* 2 bits */
-  readonly reserved:                     Uint8Array;  
+  readonly reserved: Uint8Array;  
 
   /* 6 bytes */
-  readonly nodeIdentifier:               Uint8Array;
+  readonly nodeIdentifier: Uint8Array;
 
-  toString():                            string;
+  toString(): string;
 }
 
 export default IUUID;

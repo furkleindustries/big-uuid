@@ -161,17 +161,6 @@ export class UUID implements IUUID {
     return timeHigh;
   }
 
-  /* 2 bytes */
-  get timeHighAndVersion(): Uint8Array {
-    const timeHigh = this.timeHigh;
-    const version = parseInt(this.version).toString(2);
-    const timeHighNum = uintArrayAsNumber(timeHigh).toString(2);
-    const binStr = version.padStart(4, '0') + timeHighNum.padStart(12, '0');
-    const firstByte = parseInt(binStr.slice(0, 8), 2);
-    const secondByte = parseInt(binStr.slice(8, 16), 2);
-    return new Uint8Array([ firstByte, secondByte, ]);
-  }
-
   /* 14 bits */
   private __clockSequence: Uint8Array;
   get clockSequence(): Uint8Array {
