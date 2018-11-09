@@ -5,9 +5,6 @@ import {
   TNamespaceId,
 } from './TypeAliases/TNamespaceId';
 import {
-  TUUIDVersion,
-} from './TypeAliases/TUUIDVersion';
-import {
   UUIDVersions,
 } from './Enums/UUIDVersions';
 
@@ -16,7 +13,7 @@ const MD5 = require('crypto-js/md5');
 const hex = require('crypto-js/enc-hex');
 
 export const getHashFromNamespaceIdAndName = (
-  version: TUUIDVersion,
+  version: UUIDVersions,
   namespaceId: TNamespaceId,
   name: string,
 ): string => {
@@ -27,12 +24,8 @@ export const getHashFromNamespaceIdAndName = (
   }
 
   const toHash = namespaceId + name;
-  let hash;
-  if (version.toString() === UUIDVersions.Three) {
-    hash = MD5(toHash);
-  } else {
-    hash = SHA1(toHash);
-  }
-
+  const hash = version === UUIDVersions.Three ? MD5(toHash) : SHA1(toHash);
   return hex.stringify(hash);
 }
+
+export default getHashFromNamespaceIdAndName;

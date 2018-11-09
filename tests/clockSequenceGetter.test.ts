@@ -20,14 +20,6 @@ import {
   getLastResults,
 } from '../src/getLastResults';
 jest.mock('../src/getLastResults');
-import {
-  randomBytesGenerator,
-} from '../src/randomBytesGenerator';
-jest.mock('../src/randomBytesGenerator');
-import {
-  uintArrayAsNumber,
-} from '../src/uintArrayAsNumber';
-jest.mock('../src/uintArrayAsNumber');
 
 describe('clockSequenceGetter tests.', () => {
   beforeEach(() => {

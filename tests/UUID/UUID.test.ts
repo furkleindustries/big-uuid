@@ -9,10 +9,6 @@ import {
 } from '../../src/Enums/UUIDVersions';
 
 import {
-  getHashFromNamespaceIdAndName,
-} from '../../src/getHashFromNamespaceIdAndName';
-jest.mock('../../src/getHashFromNamespaceIdAndName');
-import {
   isNode,
 } from '../../src/isNode';
 jest.mock('../../src/isNode');
@@ -21,9 +17,25 @@ import {
 } from '../../src/TypeGuards/isUUIDVersion';
 jest.mock('../../src/TypeGuards/isUUIDVersion');
 import {
-  uintArrayAsNumber,
-} from '../../src/uintArrayAsNumber';
-jest.mock('../../src/uintArrayAsNumber');
+  makeVersionOneUUIDValues,
+} from '../../src/UUID/makeVersionOneUUIDValues';
+jest.mock('../../src/UUID/makeVersionOneUUIDValues');
+import {
+  makeVersionThreeOrFiveUUIDValues,
+} from '../../src/UUID/makeVersionThreeOrFiveUUIDValues';
+jest.mock('../../src/UUID/makeVersionThreeOrFiveUUIDValues');
+import {
+  makeVersionFourUUIDValues,
+} from '../../src/UUID/makeVersionFourUUIDValues';
+jest.mock('../../src/UUID/makeVersionFourUUIDValues');
+import {
+  makeVersionNilUUIDValues,
+} from '../../src/UUID/makeVersionNilUUIDValues';
+jest.mock('../../src/UUID/makeVersionNilUUIDValues');
+import {
+  mergeUUIDOptions,
+} from '../../src/UUID/UUIDOptions/mergeUUIDOptions';
+jest.mock('../../src/UUID/UUIDOptions/mergeUUIDOptions');
 import {
   UUIDOptions,
 } from '../../src/UUID/UUIDOptions/UUIDOptions';
@@ -33,289 +45,239 @@ import {
 } from '../../src/writeNewResults';
 jest.mock('../../src/writeNewResults');
 
-describe('UUID tests.', () => {
-  const mockUUIDOptions = {
-    clockSequenceGetter: jest.fn(),
-    nodeIdentifierGetter: jest.fn(),
-    timestampGetter: jest.fn(),
+describe('UUID unit tests.', () => {
+  const mockUUIDOptions = Object.freeze({
     version: UUIDVersions.Four,
+  });
+
+  const baseMakeValues = {
+    clockSequence: [ 0, 1, ],
+    nodeIdentifier: [ 0, 1, 2, 3, 4, 5, ],
+    timestamp: [ 0, 1, 2, 3, 4, 5, 6, 7, ],
   };
 
   beforeEach(() => {
-    (getHashFromNamespaceIdAndName as any).mockClear();
-    (getHashFromNamespaceIdAndName as any).mockReturnValue('hash');
-    (isNode as any).mockClear();
     (isNode as any).mockReturnValue(true);
-    (isUUIDVersion as any).mockClear();
+    (isNode as any).mockClear();
     (isUUIDVersion as any).mockReturnValue(true);
-    (uintArrayAsNumber as any).mockClear();
-    (uintArrayAsNumber as any).mockReturnValue(12);
-    (UUIDOptions as any).mockClear();
+    (isUUIDVersion as any).mockClear();
+    (makeVersionOneUUIDValues as any).mockReturnValue(baseMakeValues);
+    (makeVersionOneUUIDValues as any).mockClear();
+    (makeVersionThreeOrFiveUUIDValues as any).mockReturnValue(baseMakeValues);
+    (makeVersionThreeOrFiveUUIDValues as any).mockClear();
+    (makeVersionFourUUIDValues as any).mockReturnValue(baseMakeValues);
+    (makeVersionFourUUIDValues as any).mockClear();
+    (makeVersionNilUUIDValues as any).mockReturnValue(baseMakeValues);
+    (makeVersionNilUUIDValues as any).mockClear();
+    (mergeUUIDOptions as any).mockReturnValue(mockUUIDOptions);
+    (mergeUUIDOptions as any).mockClear();
     (UUIDOptions as any).mockImplementation(() => mockUUIDOptions);
-    mockUUIDOptions.clockSequenceGetter.mockClear();
-    mockUUIDOptions.nodeIdentifierGetter.mockClear();
-    mockUUIDOptions.timestampGetter.mockClear();
+    (UUIDOptions as any).mockClear();
     (writeNewResults as any).mockClear();
   });
 
-  it('Creates an instance of UUIDOptions as the base state.', () => {
+  it('Creates a group of base options.', () => {
     new UUID();
-    expect(UUIDOptions).toHaveBeenCalledTimes(1);
+    expect((UUIDOptions as any).mock.calls).toEqual([ [], ]);
   });
 
-  it('Merges argOptions.version if it is truthy.', () => {
-    const uuid = new UUID({ version: UUIDVersions.Nil, });
-    expect(uuid.version).toBe(UUIDVersions.Nil);
+  it('Merges the argument options with the base options, if the argument options are provided.', () => {
+    const opts = {
+      version: UUIDVersions.Nil,
+    };
+
+    new UUID(opts);
+    expect((mergeUUIDOptions as any).mock.calls).toEqual([
+      [
+        new UUIDOptions(),
+        opts,
+      ],
+    ]);
   });
 
-  it('Throws if argOpts.version is truthy and does not meet the isUUIDVersion type guard.', () => {
+  it('Throws an error if the merged version option does not meet the isUUIDVersion type guard.', () => {
     (isUUIDVersion as any).mockReturnValue(false);
-    const func = () => new UUID({ version: 'foobar' as any, });
+    
+    const func = () => new UUID();
     expect(func).toThrow(strings.UUID_VERSION_INVALID);
   });
 
-  it('Throws if isNode returns false and the version is 1.', () => {
+  it('Throws an error if the version is 1 and isNode returns false.', () => {
     (isNode as any).mockReturnValue(false);
-    const func = () => new UUID({ version: UUIDVersions.One, });
+    (UUIDOptions as any).mockImplementationOnce(() => ({ version: UUIDVersions.One, }));
+
+    const func = () => new UUID();
     expect(func).toThrow(strings.VERSION_1_IN_BROWSER);
   });
 
-  it('Throws if the version is 3 and the namespaceId argument is not truthy.', () => {
-    const func = () => new UUID({
-      version: UUIDVersions.Three,
-      namespaceId: false as any,
-    });
+  it('Passes the options to makeVersionOneUUIDValues if the version is 1.', () => {
+    const opts = { version: UUIDVersions.One, };
 
-    expect(func).toThrow(strings.NAMESPACE_ID_MISSING);
-  });
+    (UUIDOptions as any).mockImplementationOnce(() => opts);
 
-  it('Throws if the version is 5 and the namespaceId argument is not truthy.', () => {
-    const func = () => new UUID({
-      version: UUIDVersions.Five,
-      namespaceId: false as any,
-    });
-
-    expect(func).toThrow(strings.NAMESPACE_ID_MISSING);
-  });
-
-  it('Throws if the version is 3 and the name argument is not truthy.', () => {
-    const func = () => new UUID({
-      version: UUIDVersions.Three,
-      namespaceId: 'whatever',
-      name: false as any,
-    });
-
-    expect(func).toThrow(strings.NAME_MISSING);
-  });
-
-  it('Throws if the version is 5 and the namespaceId argument is not truthy.', () => {
-    const func = () => new UUID({
-      version: UUIDVersions.Five,
-      namespaceId: 'whatever',
-      name: false as any,
-    });
-
-    expect(func).toThrow(strings.NAME_MISSING);
-  });
-
-  it('Calls argOptions.clockSequenceGetter with version if it is a function and the version is 1.', () => {
-    const func = jest.fn();
-    new UUID({
-      version: UUIDVersions.One,
-      clockSequenceGetter: func,
-    });
-
-    expect(func.mock.calls).toEqual([
-      [ UUIDVersions.One, ],
+    new UUID();
+    expect((makeVersionOneUUIDValues as any).mock.calls).toEqual([
+      [ opts, ],
     ]);
   });
 
-  it('Calls argOptions.clockSequenceGetter with version if it is a function and the version is 4.', () => {
-    const func = jest.fn();
-    new UUID({
-      version: UUIDVersions.Four,
-      clockSequenceGetter: func,
-    });
+  it('Passes the UUID to writeNewResults if shouldWrite is returned from makeVersionOneUUIDValues.', () => {
+    const opts = { version: UUIDVersions.One, };
 
-    expect(func.mock.calls).toEqual([
-      [ UUIDVersions.Four, ],
-    ]);
-  });
+    (UUIDOptions as any).mockImplementationOnce(() => opts);
+    (makeVersionOneUUIDValues as any).mockReturnValue(Object.assign(
+      {},
+      baseMakeValues,
+      { shouldWrite: true, },
+    ));
 
-  it('Calls argOptions.nodeIdentifierGetter with version if it is a function and the version is 1.', () => {
-    const func = jest.fn();
-    new UUID({
-      version: UUIDVersions.One,
-      nodeIdentifierGetter: func,
-    });
-
-    expect(func.mock.calls).toEqual([
-      [ UUIDVersions.One, ],
-    ]);
-  });
-
-  it('Calls argOptions.nodeIdentifierGetter with version if it is a function and the version is 4.', () => {
-    const func = jest.fn();
-    new UUID({
-      version: UUIDVersions.Four,
-      nodeIdentifierGetter: func,
-    });
-
-    expect(func.mock.calls).toEqual([
-      [ UUIDVersions.Four, ],
-    ]);
-  });
-
-  it('Calls argOptions.timestampGetter with version if it is a function and the version is 1.', () => {
-    const func = jest.fn();
-    new UUID({
-      version: UUIDVersions.One,
-      timestampGetter: func,
-    });
-
-    expect(func.mock.calls).toEqual([
-      [ UUIDVersions.One, ],
-    ]);
-  });
-
-  it('Calls argOptions.timestampGetter with version if it is a function and the version is 4.', () => {
-    const func = jest.fn();
-    new UUID({
-      version: UUIDVersions.Four,
-      timestampGetter: func,
-    });
-
-    expect(func.mock.calls).toEqual([
-      [ UUIDVersions.Four, ],
-    ]);
-  });
-
-  /* TODO: add writeNewResults and clock sequence edge case tests. */
-
-  it('Calls getHashFromNamespaceId with argOptions.namespaceId and argOptions.name if it is truthy and the version is 3.', () => {
-    new UUID({
-      version: UUIDVersions.Three,
-      namespaceId: 'test1',
-      name: 'test2',
-    });
-
-    expect((getHashFromNamespaceIdAndName as any).mock.calls).toEqual([
+    const uuid = new UUID();
+    expect((writeNewResults as any).mock.calls).toEqual([
       [
-        UUIDVersions.Three,
-        'test1',
-        'test2',
-      ]
-    ]);
-  });
-
-  it('Calls getHashFromNamespaceId with argOptions.namespaceId and argOptions.name if it is truthy and the version is 5.', () => {
-    new UUID({
-      version: UUIDVersions.Three,
-      namespaceId: 'test1',
-      name: 'test2',
-    });
-
-    expect((getHashFromNamespaceIdAndName as any).mock.calls).toEqual([
-      [
-        UUIDVersions.Three,
-        'test1',
-        'test2',
-      ]
-    ]);
-  });
-
-  it('Calls clockSequenceGetter with version and hash if the version is 3.', () => {
-    new UUID({
-      version: UUIDVersions.Three,
-      name: 'test1',
-      namespaceId: 'test2',
-    });
-
-    expect(mockUUIDOptions.clockSequenceGetter.mock.calls).toEqual([
-      [
-        UUIDVersions.Three,
-        'hash',
+        uuid,
       ],
     ]);
   });
 
-  it('Calls clockSequenceGetter with version and hash if the version is 5.', () => {
-    new UUID({
-      version: UUIDVersions.Five,
-      name: 'test1',
-      namespaceId: 'test2',
-    });
+  it('Passes the options to makeVersionThreeOrFiveUUIDValues if the version is 3.', () => {
+    const opts = { version: UUIDVersions.Three, };
 
-    expect(mockUUIDOptions.clockSequenceGetter.mock.calls).toEqual([
-      [
-        UUIDVersions.Five,
-        'hash',
-      ],
+    (UUIDOptions as any).mockImplementationOnce(() => opts);
+
+    new UUID();
+    expect((makeVersionThreeOrFiveUUIDValues as any).mock.calls).toEqual([
+      [ opts, ],
     ]);
   });
 
-  it('Calls nodeIdentifierGetter with version and hash if the version is 3.', () => {
-    new UUID({
-      version: UUIDVersions.Three,
-      name: 'test1',
-      namespaceId: 'test2',
-    });
+  it('Passes the options to makeVersionThreeOrFiveUUIDValues if the version is 5.', () => {
+    const opts = { version: UUIDVersions.Five, };
 
-    expect(mockUUIDOptions.nodeIdentifierGetter.mock.calls).toEqual([
-      [
-        UUIDVersions.Three,
-        'hash',
-      ],
+    (UUIDOptions as any).mockImplementationOnce(() => opts);
+
+    new UUID();
+    expect((makeVersionThreeOrFiveUUIDValues as any).mock.calls).toEqual([
+      [ opts, ],
     ]);
   });
 
-  it('Calls nodeIdentifierGetter with version and hash if the version is 5.', () => {
-    new UUID({
-      version: UUIDVersions.Five,
-      name: 'test1',
-      namespaceId: 'test2',
-    });
+  it('Passes the options to makeVersionFourUUIDValues if the version is 4.', () => {
+    const opts = { version: UUIDVersions.Four, };
 
-    expect(mockUUIDOptions.nodeIdentifierGetter.mock.calls).toEqual([
-      [
-        UUIDVersions.Five,
-        'hash',
-      ],
+    (UUIDOptions as any).mockImplementationOnce(() => opts);
+
+    new UUID();
+    expect((makeVersionFourUUIDValues as any).mock.calls).toEqual([
+      [ opts, ],
     ]);
   });
 
-  it('Calls timestampGetter with version and hash if the version is 3.', () => {
-    new UUID({
-      version: UUIDVersions.Three,
-      name: 'test1',
-      namespaceId: 'test2',
-    });
+  it('Passes the options to makeVersionNilUUIDValues if the version is 4.', () => {
+    const opts = { version: UUIDVersions.Nil, };
 
-    expect(mockUUIDOptions.timestampGetter.mock.calls).toEqual([
-      [
-        UUIDVersions.Three,
-        'hash',
-      ],
-    ]);
+    (UUIDOptions as any).mockImplementationOnce(() => opts);
+
+    new UUID();
+
+    /* No call signature for nil as it needs no arguments. */
+    expect((makeVersionNilUUIDValues as any).mock.calls).toEqual([ [], ]);
   });
 
-  it('Calls timestampGetter with version and hash if the version is 5.', () => {
-    new UUID({
-      version: UUIDVersions.Five,
-      name: 'test1',
-      namespaceId: 'test2',
-    });
+  it('The version getter returns the __version property.', () => {
+    const uuid = new UUID();
+    (uuid as any).__version = 'test1';
+    expect(uuid.version).toBe('test1');
+  });
 
-    expect(mockUUIDOptions.timestampGetter.mock.calls).toEqual([
-      [
-        UUIDVersions.Five,
-        'hash',
-      ],
-    ]);
+  it('The timestamp getter returns the __timestamp property.', () => {
+    const uuid = new UUID();
+    (uuid as any).__timestamp = 'test2';
+    expect(uuid.timestamp).toBe('test2');
+  });
+
+  it('The timeLow getter returns the 4, 8 slice of timestamp.', () => {
+    const uuid = new UUID();
+    (uuid as any).__timestamp = [ 0, 1, 2, 3, 4, 5, 6, 7, ];
+    expect(uuid.timeLow).toEqual([ 4, 5, 6, 7, ]);
+  });
+
+  it('The timeMid getter returns the 2, 4 slice of timestamp.', () => {
+    const uuid = new UUID();
+    (uuid as any).__timestamp = [ 0, 1, 2, 3, 4, 5, 6, 7, ];
+    expect(uuid.timeMid).toEqual([ 2, 3, ]);
+  });
+
+  it('The timeHigh getter returns the 0, 2 slice of timestamp.', () => {
+    const uuid = new UUID();
+    (uuid as any).__timestamp = [ 0, 1, 2, 3, 4, 5, 6, 7, ];
+    expect(uuid.timeHigh).toEqual([ 0, 1, ]);
+  });
+
+  it('The timeHighAndVersion getter returns the version combined with the 0, 2 slice of timestamp.', () => {
+    (UUIDOptions as any).mockImplementationOnce(() => ({ version: UUIDVersions.Three, }));
+
+    const uuid = new UUID();
+    (uuid as any).__timestamp = [ 0, 1, 2, 3, 4, 5, 6, 7, ];
+    expect(uuid.timeHighAndVersion).toEqual(new Uint8Array([ 48, 1, ]));
+  });
+
+  it('The clockSequence getter returns the __clockSequence property.', () => {
+    const uuid = new UUID();
+    (uuid as any).__clockSequence = 'test3';
+    expect(uuid.clockSequence).toBe('test3');
+  });
+
+  it('The clockSequenceLow getter returns the 0, 1 slice of timestamp.', () => {
+    const uuid = new UUID();
+    (uuid as any).__clockSequence = [ 0, 1, ];
+    expect(uuid.clockSequenceLow).toEqual([ 1, ]);
+  });
+
+  it('The clockSequenceLow getter returns the 0, 1 slice of timestamp.', () => {
+    const uuid = new UUID();
+    (uuid as any).__clockSequence = [ 0, 1, ];
+    expect(uuid.clockSequenceHigh).toEqual([ 0, ]);
+  });
+
+  it('The reserved getter returns [ 2 ].', () => {
+    const uuid = new UUID();
+    expect(uuid.reserved).toEqual(new Uint8Array([ 2, ]));
+  });
+
+  it('The clockSequenceHighAndReserved getter returns the 0, 1 slice of timestamp.', () => {
+    const uuid = new UUID();
+    (uuid as any).__clockSequence = [ 1, 2, ];
+    expect(uuid.clockSequenceHighAndReserved).toEqual(new Uint8Array([ 6, ]));
+  });
+
+  it('The nodeIdentifier getter returns the __nodeIdentifier property.', () => {
+    const uuid = new UUID();
+    (uuid as any).__nodeIdentifier = 'test4';
+    expect(uuid.nodeIdentifier).toEqual('test4');
   });
 
   it('Throws if UUID.parse is called and there are not five dash-delimited portions of the argument string.', () => {
     const func = () => UUID.parse('fdsfkdlfljdsfjds');
     expect(func).toThrow(strings.UUID_STRING_INVALID);
+  });
+
+  it('Produces an object with expected property names when a valid UUID string is parsed.', () => {
+    const uuid = UUID.parse('bcdab3ec-e3bd-11e8-9f32-f2801f1b9fd1');
+    expect(Boolean(
+      uuid.version === UUIDVersions.One &&
+      '__version' in uuid &&
+      'version' in uuid &&
+      '__timestamp' in uuid &&
+      'timestamp' in uuid &&
+      '__clockSequence' in uuid &&
+      'clockSequence' in uuid &&
+      '__nodeIdentifier' in uuid &&
+      'nodeIdentifier' in uuid
+    )).toBe(true);
+  });
+
+  it('Outputs a string representation of the UUID when toString is called.', () => {
+    const uuid = new UUID();
+    expect(uuid.toString()).toBe('00004567-0023-4001-0201-000000012345');
   });
 });

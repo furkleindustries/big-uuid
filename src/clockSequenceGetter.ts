@@ -14,9 +14,6 @@ import {
   strings,
 } from './strings';
 import {
-  TUUIDVersion,
-} from './TypeAliases/TUUIDVersion';
-import {
   uintArrayAsNumber,
 } from './uintArrayAsNumber';
 import {
@@ -24,7 +21,7 @@ import {
 } from './Enums/UUIDVersions';
 
 export const clockSequenceGetter = (
-  version: TUUIDVersion,
+  version: UUIDVersions,
   hash?: string,
 ): Uint8Array =>
 {
@@ -33,7 +30,7 @@ export const clockSequenceGetter = (
   }
 
   let clockSequence: Uint8Array;
-  if (/^[14]$/.test(version.toString())) {
+  if (version === UUIDVersions.One || version === UUIDVersions.Four) {
     const getRandomSeq = () => {
       /* If the clock sequence cannot be found, or a non-V1 ID is being 
        * generated, generate a random new clock sequence. */
@@ -46,7 +43,7 @@ export const clockSequenceGetter = (
     };
 
     const lastResults = (() => {
-      if (version.toString() === UUIDVersions.One) {
+      if (version === UUIDVersions.One) {
         return getLastResults();
       }
     })();

@@ -14,14 +14,11 @@ import {
   strings,
 } from './strings';
 import {
-  TUUIDVersion,
-} from './TypeAliases/TUUIDVersion';
-import {
   UUIDVersions,
 } from './Enums/UUIDVersions';
 
 export function timestampGetter(
-  version: TUUIDVersion,
+  version: UUIDVersions,
   hash?: string,
 ): Uint8Array
 {
@@ -30,7 +27,7 @@ export function timestampGetter(
   }
   
   let timestamp: Uint8Array;
-  if (version.toString() === UUIDVersions.One) {
+  if (version === UUIDVersions.One) {
     const currentTimestamp = getHundredsOfNanosecondsSinceGregorianReform();
     const timestampStr = currentTimestamp.toString(2).padStart(60, '0');
     const inputArr = [];
@@ -40,7 +37,7 @@ export function timestampGetter(
     }
 
     timestamp = new Uint8Array(inputArr);  
-  } else if (/^[35]$/.test(version.toString())) {
+  } else if (version === UUIDVersions.Three || version === UUIDVersions.Five) {
     /* Version is 3 or 5. */
     if (!hash) {
       throw new Error(strings.HASH_ARGUMENT_MISSING);
