@@ -15,7 +15,7 @@ install:
   - npm install codecov -g
 
 script:
-  - npm test
+  - npm run test-coverage
 
 after_success:
   - codecov
