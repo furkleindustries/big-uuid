@@ -24,7 +24,7 @@ export const getHashFromNamespaceIdAndName = (
   }
 
   const toHash = namespaceId + name;
-  const hash = version === UUIDVersions.Three ? MD5(toHash) : SHA1(toHash);console.log(hash);
+  const hash = version === UUIDVersions.Three ? MD5(toHash) : SHA1(toHash);
   return hex.stringify(hash);
 }
 
