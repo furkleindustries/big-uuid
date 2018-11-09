@@ -4,6 +4,6 @@ export const uintArrayAsHex = (array: Uint8Array | Uint16Array | Uint32Array): s
   (array as Uint8Array).reduce<string>((str, val) => {
     return str + val.toString(16);
   }, '')
-)
+);
 
 export default uintArrayAsHex;

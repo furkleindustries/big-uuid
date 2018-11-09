@@ -8,26 +8,17 @@ import {
   isUUIDVersion,
 } from './TypeGuards/isUUIDVersion';
 import {
-  lastResults,
-} from './lastResults';
-import {
   randomBytesGenerator,
 } from './randomBytesGenerator';
 import {
   strings,
 } from './strings';
 import {
-  TUUIDVersion,
-} from './TypeAliases/TUUIDVersion';
-import {
-  uintArrayAsNumber,
-} from './uintArrayAsNumber';
-import {
   UUIDVersions,
 } from './Enums/UUIDVersions';
 
 export function timestampGetter(
-  version: TUUIDVersion,
+  version: UUIDVersions,
   hash?: string,
 ): Uint8Array
 {
@@ -36,22 +27,8 @@ export function timestampGetter(
   }
   
   let timestamp: Uint8Array;
-  if (version.toString() === UUIDVersions.One) {
-    const oldTimestamp = lastResults.timestamp;
+  if (version === UUIDVersions.One) {
     const currentTimestamp = getHundredsOfNanosecondsSinceGregorianReform();
-    /* Check if the last recorded timestamp is after the current time. */
-    if ((oldTimestamp && 'BYTES_PER_ELEMENT' in oldTimestamp) &&
-        (uintArrayAsNumber(oldTimestamp) > currentTimestamp) &&
-        (lastResults.clockSequence && 'BYTES_PER_ELEMENT' in lastResults.clockSequence))
-    {
-      /* Increment the clock sequence given that the timestamp is invalid. */
-      lastResults.clockSequence[1] += 1;
-      if (lastResults.clockSequence[1] === 0) {
-        /* Increment the upper byte if the lower byte wrapped around. */
-        lastResults.clockSequence[0] += 1;
-      }
-    }
-
     const timestampStr = currentTimestamp.toString(2).padStart(60, '0');
     const inputArr = [];
     for (let ii = 60; ii > 0; ii -= 8) {
@@ -59,8 +36,8 @@ export function timestampGetter(
       inputArr.unshift(parseInt(byte, 2));
     }
 
-    timestamp = new Uint8Array(inputArr);
-  } else if (/^[35]$/.test(version.toString())) {
+    timestamp = new Uint8Array(inputArr);  
+  } else if (version === UUIDVersions.Three || version === UUIDVersions.Five) {
     /* Version is 3 or 5. */
     if (!hash) {
       throw new Error(strings.HASH_ARGUMENT_MISSING);
@@ -83,7 +60,6 @@ export function timestampGetter(
     timestamp[7] = parseInt(timestamp[7].toString(2).slice(0, 4), 2);
   }
 
-  lastResults.timestamp = timestamp;
   return timestamp;
 }
 

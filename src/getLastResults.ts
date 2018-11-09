@@ -14,18 +14,25 @@ import {
   TUUIDLastResults,
 } from './TypeAliases/TUUIDLastResults';
 
-export const lastResults: TUUIDLastResults = (() => {
-  let lastResults: TUUIDLastResults | null = null;
+let lastResults: TUUIDLastResults | null = null;
+
+export const getLastResults = () => {
+  if (lastResults) {
+    return lastResults;
+  }
+
+  let tempLastResults;
   try {
     const fileStr = readFileSync(join(homedir(), 'ifid'), 'utf8');
-    lastResults = JSON.parse(fileStr) as TUUIDLastResults;
+    tempLastResults = JSON.parse(fileStr) as TUUIDLastResults;
   } catch (e) { /* Do nothing. */ }
 
-  if (isValidLastResults(lastResults)) {
+  if (isValidLastResults(tempLastResults)) {
+    lastResults = tempLastResults;
     return lastResults;
   } else {
     return {} as TUUIDLastResults;
   }
-})();
+};
 
-export default lastResults;
+export default getLastResults;

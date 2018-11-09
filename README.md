@@ -4,7 +4,7 @@
 
 ## Summary
 
-An RFC 4112 conformant UUID generator creating v1, v3, v4, and v5 UUIDs. Depends on the `crypto-js` package for its usage of MD5 (v3) and SHA (v5) hashing and nothing else.
+An RFC 4122 conformant UUID generator creating v1, v3, v4, and v5 UUIDs. Depends on the `crypto-js` package for its usage of MD5 (v3) and SHA (v5) hashing, the `big-integer` package to prevent precision errors, and nothing else.
 
 ## Usage
 
@@ -13,7 +13,8 @@ In node, first install the package:
 
 Then require the package:
 
-```const uuid = require('big-uuid');
+```javascript
+const uuid = require('big-uuid');
 
 const v4 = new uuid.UUID();
 console.log(v4.id);

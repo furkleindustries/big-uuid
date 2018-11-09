@@ -1,5 +1,5 @@
 export enum UUIDVersions {
-  Nil = 'nil',
+  Nil = '0',
   One = '1',
   Three = '3',
   Four = '4',

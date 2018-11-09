@@ -5,8 +5,8 @@ import {
   getMAC,
 } from './getMAC';
 import {
-  lastResults,
-} from './lastResults';
+  getLastResults,
+} from './getLastResults';
 import {
   randomBytesGenerator,
 } from './randomBytesGenerator';
@@ -14,19 +14,18 @@ import {
   strings,
 } from './strings';
 import {
-  TUUIDVersion,
-} from './TypeAliases/TUUIDVersion';
-import {
   UUIDVersions,
 } from './Enums/UUIDVersions';
 
 export function nodeIdentifierGetter(
-  version: TUUIDVersion,
+  version: UUIDVersions,
   hash?: string,
 ): Uint8Array
 {
   let nodeIdentifier: Uint8Array;
-  if (version.toString() === UUIDVersions.One) { /* Create the node ID from the system time. */
+  if (version === UUIDVersions.One) {
+    /* Create the node ID from the system time. */
+    const lastResults = getLastResults();
     if (lastResults.nodeIdentifier &&
         'BYTES_PER_ELEMENT' in lastResults.nodeIdentifier)
     {
@@ -34,8 +33,7 @@ export function nodeIdentifierGetter(
     }
 
     nodeIdentifier = getMAC();
-    lastResults.nodeIdentifier = nodeIdentifier;
-  } else if (/^[35]$/.test(version.toString())) {
+  } else if (version === UUIDVersions.Three || version === UUIDVersions.Five) {
     if (!hash) {
       throw new Error(strings.HASH_ARGUMENT_MISSING);
     }
@@ -56,7 +54,7 @@ export function nodeIdentifierGetter(
       nodeIdentifierBinStr.slice(8); 
 
     nodeIdentifier = convertBinStrToUint8Array(nodeIdentifierBinStr);
-  } else if (version.toString() === UUIDVersions.Four) {
+  } else if (version === UUIDVersions.Four) {
     nodeIdentifier = randomBytesGenerator(6);
   } else {
     throw new Error(strings.UUID_VERSION_INVALID);
