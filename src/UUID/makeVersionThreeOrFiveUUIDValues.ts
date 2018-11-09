@@ -10,6 +10,9 @@ import {
 import {
   strings,
 } from '../strings';
+import {
+  UUIDVersions,
+} from '../Enums/UUIDVersions';
 
 export const makeVersionThreeOrFiveUUIDValues = (options: IUUIDOptions): IUUIDComponentValues => {
   if (!options.namespaceId) {
@@ -19,7 +22,7 @@ export const makeVersionThreeOrFiveUUIDValues = (options: IUUIDOptions): IUUIDCo
   }
 
   const hash = getHashFromNamespaceIdAndName(
-    options.version,
+    options.version as UUIDVersions.Three | UUIDVersions.Five,
     options.namespaceId,
     options.name,
   );
