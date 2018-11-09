@@ -84,10 +84,10 @@ describe('clockSequenceGetter tests.', () => {
   });
 
   it('Takes the 16, 20 slice from the hash for the clock sequence str.', () => {
-    (convertBinStrToUint8Array as any).mockImplementation((aa) => aa);
+    (convertBinStrToUint8Array as any).mockImplementation((aa: any) => aa);
     /* 16, 20 slice is 0x0123. */
     const cs = clockSequenceGetter(UUIDVersions.Three, '0123456789abcdef01234567890');
-    /* 0x123 is 0b100100011. */
+    /* 0x123 is 0b100100011. This is padded to 14 bits in length. */
     expect(cs).toEqual('00000100100011');
   });
 });
