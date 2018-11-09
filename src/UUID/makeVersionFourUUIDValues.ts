@@ -6,9 +6,9 @@ import {
 } from './UUIDOptions/IUUIDOptions';
 
 export const makeVersionFourUUIDValues = (options: IUUIDOptions): IUUIDComponentValues => ({
-  timestamp: options.timestampGetter(options.version),
-  nodeIdentifier: options.nodeIdentifierGetter(options.version),
   clockSequence: options.clockSequenceGetter(options.version),
+  nodeIdentifier: options.nodeIdentifierGetter(options.version),
+  timestamp: options.timestampGetter(options.version),
 });
 
 export default makeVersionFourUUIDValues;

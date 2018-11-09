@@ -42,12 +42,7 @@ export const clockSequenceGetter = (
       ]);
     };
 
-    const lastResults = (() => {
-      if (version === UUIDVersions.One) {
-        return getLastResults();
-      }
-    })();
-
+    const lastResults = version === UUIDVersions.One ? getLastResults() : null;
     if (lastResults &&
         lastResults.clockSequence &&
         'BYTES_PER_ELEMENT' in lastResults.clockSequence)
