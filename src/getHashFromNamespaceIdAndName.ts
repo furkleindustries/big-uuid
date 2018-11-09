@@ -8,12 +8,12 @@ import {
   UUIDVersions,
 } from './Enums/UUIDVersions';
 
-const SHA1 = require('crypto-js/sha1');
 const MD5 = require('crypto-js/md5');
+const SHA1 = require('crypto-js/sha1');
 const hex = require('crypto-js/enc-hex');
 
 export const getHashFromNamespaceIdAndName = (
-  version: UUIDVersions,
+  version: UUIDVersions.Three | UUIDVersions.Five,
   namespaceId: TNamespaceId,
   name: string,
 ): string => {
@@ -24,7 +24,7 @@ export const getHashFromNamespaceIdAndName = (
   }
 
   const toHash = namespaceId + name;
-  const hash = version === UUIDVersions.Three ? MD5(toHash) : SHA1(toHash);
+  const hash = version === UUIDVersions.Three ? MD5(toHash) : SHA1(toHash);console.log(hash);
   return hex.stringify(hash);
 }
 
