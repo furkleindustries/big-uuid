@@ -26,7 +26,8 @@ export function nodeIdentifierGetter(
   if (version === UUIDVersions.One) {
     /* Create the node ID from the system time. */
     const lastResults = getLastResults();
-    if (lastResults.nodeIdentifier &&
+    if (lastResults &&
+        lastResults.nodeIdentifier &&
         'BYTES_PER_ELEMENT' in lastResults.nodeIdentifier)
     {
       return lastResults.nodeIdentifier;
@@ -39,7 +40,7 @@ export function nodeIdentifierGetter(
     }
 
     let nodeIdentifierStr = '';
-    
+
     /* node_identifier */
     nodeIdentifierStr += hash.slice(20, 32);
     let nodeIdentifierBinStr = parseInt(nodeIdentifierStr, 16)
