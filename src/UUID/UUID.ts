@@ -37,6 +37,7 @@ import {
 import makeVersionFourUUIDValues from './makeVersionFourUUIDValues';
 import makeVersionNilUUIDValues from './makeVersionNilUUIDValues';
 import { mergeUUIDOptions } from './UUIDOptions/mergeUUIDOptions';
+import IUUIDComponentValues from './IUUIDComponentValues';
 
 /* The formal Augmented Backus-Naur Form grammar for UUIDs is as follows,
  * courtesy RFC-4112:
@@ -75,54 +76,32 @@ export class UUID implements IUUID {
 
     this.__version = version;
 
-    if (version === UUIDVersions.One) {
-      const {
-        clockSequence,
-        nodeIdentifier,
-        shouldWrite,
-        timestamp,
-      } = makeVersionOneUUIDValues(options);
+    const {
+      clockSequence,
+      nodeIdentifier,
+      shouldWrite,
+      timestamp,
+    }: IUUIDComponentValues & { shouldWrite?: boolean, } = (() => {
+      if (version === UUIDVersions.One) {
+        return makeVersionOneUUIDValues(options);
+      } else if (version === UUIDVersions.Three ||
+        version === UUIDVersions.Five)
+      {
+        return makeVersionThreeOrFiveUUIDValues(options); 
+      } else if (version === UUIDVersions.Four) {
+        return makeVersionFourUUIDValues(options);
+      } else {
+        /* Nil */
+        return makeVersionNilUUIDValues();
+       } 
+    })();
 
-      if (shouldWrite) {
-        writeNewResults(this);
-      }
+    this.__clockSequence = clockSequence;
+    this.__nodeIdentifier = nodeIdentifier;
+    this.__timestamp = timestamp;
 
-      this.__clockSequence = clockSequence;
-      this.__nodeIdentifier = nodeIdentifier;
-      this.__timestamp = timestamp;
-    } else if (version === UUIDVersions.Three ||
-               version === UUIDVersions.Five)
-    {
-      const {
-        clockSequence,
-        nodeIdentifier,
-        timestamp,
-      } = makeVersionThreeOrFiveUUIDValues(options);
-
-      this.__clockSequence = clockSequence;
-      this.__nodeIdentifier = nodeIdentifier;
-      this.__timestamp = timestamp;  
-    } else if (version === UUIDVersions.Four) {
-      const {
-        clockSequence,
-        nodeIdentifier,
-        timestamp,
-      } = makeVersionFourUUIDValues(options);
-
-      this.__clockSequence = clockSequence;
-      this.__nodeIdentifier = nodeIdentifier;
-      this.__timestamp = timestamp;
-    } else {
-      /* Nil */
-      const {
-        clockSequence,
-        nodeIdentifier,
-        timestamp,
-      } = makeVersionNilUUIDValues();
-
-      this.__clockSequence = clockSequence;
-      this.__nodeIdentifier = nodeIdentifier;
-      this.__timestamp = timestamp;
+    if (shouldWrite) {
+      writeNewResults(this);
     }
   }
 
