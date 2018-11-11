@@ -8,14 +8,26 @@ import {
   IUUID,
 } from './IUUID';
 import {
+  IUUIDComponentValues,
+} from './IUUIDComponentValues';
+import {
   IUUIDOptions,
 } from './UUIDOptions/IUUIDOptions';
+import {
+  makeVersionFourUUIDValues,
+} from './makeVersionFourUUIDValues';
+import {
+  makeVersionNilUUIDValues,
+} from './makeVersionNilUUIDValues';
 import {
   makeVersionOneUUIDValues,
 } from './makeVersionOneUUIDValues';
 import {
   makeVersionThreeOrFiveUUIDValues,
 } from './makeVersionThreeOrFiveUUIDValues';
+import {
+  mergeUUIDOptions,
+} from './UUIDOptions/mergeUUIDOptions';
 import {
   strings,
 } from '../strings';
@@ -34,10 +46,6 @@ import {
 import {
   writeNewResults,
 } from '../writeNewResults';
-import makeVersionFourUUIDValues from './makeVersionFourUUIDValues';
-import makeVersionNilUUIDValues from './makeVersionNilUUIDValues';
-import { mergeUUIDOptions } from './UUIDOptions/mergeUUIDOptions';
-import IUUIDComponentValues from './IUUIDComponentValues';
 
 /* The formal Augmented Backus-Naur Form grammar for UUIDs is as follows,
  * courtesy RFC-4112:
