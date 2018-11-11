@@ -21,7 +21,7 @@ describe('getLastResults unit tests.', () => {
     getLastResults();
     expect(/uuid$/.test((fs.readFileSync as any).mock.calls[0][0])).toBe(true);
   });
-  
+
   it('Returns an empty object if isValidLastResults returns false.', () => {
     (isValidLastResults as any).mockReturnValue(false);
     expect(getLastResults()).toEqual({});
