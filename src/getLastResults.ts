@@ -23,7 +23,7 @@ export const getLastResults = () => {
 
   let tempLastResults;
   try {
-    const fileStr = readFileSync(join(homedir(), 'ifid'), 'utf8');
+    const fileStr = readFileSync(join(homedir(), 'uuid'), 'utf8');
     tempLastResults = JSON.parse(fileStr) as TUUIDLastResults;
   } catch (e) { /* Do nothing. */ }
 
