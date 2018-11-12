@@ -10,6 +10,10 @@ import {
   isValidLastResults,
 } from '../src/TypeGuards/isValidLastResults';
 jest.mock('../src/TypeGuards/isValidLastResults');
+import {
+  homedir,
+} from 'os';
+jest.mock('os');
 
 describe('getLastResults unit tests.', () => {
   beforeEach(() => {
@@ -17,7 +21,14 @@ describe('getLastResults unit tests.', () => {
     (readFileSync as any).mockReturnValue();
     (isValidLastResults as any).mockClear();
     (isValidLastResults as any).mockReturnValue(true);
-  })
+    (homedir as any).mockClear();
+    (homedir as any).mockReturnValue('/');
+  });
+
+  it('Calls homedir to find the uuid file.', () => {
+    getLastResults();
+    expect(homedir).toBeCalledTimes(1);
+  });
   
   it('Reads from a file called "uuid".', () => {
     getLastResults();
