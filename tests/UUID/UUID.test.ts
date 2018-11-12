@@ -61,23 +61,24 @@ describe('UUID unit tests.', () => {
   };
 
   beforeEach(() => {
-    (isNode as any).mockReturnValue(true);
     (isNode as any).mockClear();
-    (isUUIDVersion as any).mockReturnValue(true);
+    (isNode as any).mockReturnValue(true);
     (isUUIDVersion as any).mockClear();
-    (makeVersionOneUUIDValues as any).mockReturnValue(baseMakeValues);
+    (isUUIDVersion as any).mockReturnValue(true);
     (makeVersionOneUUIDValues as any).mockClear();
-    (makeVersionThreeOrFiveUUIDValues as any).mockReturnValue(baseMakeValues);
+    (makeVersionOneUUIDValues as any).mockReturnValue(baseMakeValues);
     (makeVersionThreeOrFiveUUIDValues as any).mockClear();
-    (makeVersionFourUUIDValues as any).mockReturnValue(baseMakeValues);
+    (makeVersionThreeOrFiveUUIDValues as any).mockReturnValue(baseMakeValues);
     (makeVersionFourUUIDValues as any).mockClear();
-    (makeVersionNilUUIDValues as any).mockReturnValue(baseMakeValues);
+    (makeVersionFourUUIDValues as any).mockReturnValue(baseMakeValues);
     (makeVersionNilUUIDValues as any).mockClear();
-    (mergeUUIDOptions as any).mockReturnValue(mockUUIDOptions);
+    (makeVersionNilUUIDValues as any).mockReturnValue(baseMakeValues);
     (mergeUUIDOptions as any).mockClear();
+    (mergeUUIDOptions as any).mockReturnValue(mockUUIDOptions);
     (uintArrayAsHex as any).mockClear();
-    (UUIDOptions as any).mockImplementation(() => mockUUIDOptions);
+    (uintArrayAsHex as any).mockReturnValue('testbar');
     (UUIDOptions as any).mockClear();
+    (UUIDOptions as any).mockImplementation(() => mockUUIDOptions);
     (writeNewResults as any).mockClear();
   });
 
@@ -279,14 +280,9 @@ describe('UUID unit tests.', () => {
     )).toBe(true);
   });
 
-  it('Outputs a string representation of the UUID when toString is called.', () => {
+  it('Calls uintArrayAsHex to convert segments when toString is called.', () => {
     const uuid = new UUID();
     const str = uuid.toString();
-    expect(Boolean(
-      str &&
-      typeof str === 'string' &&
-      str.length === 36 &&
-      str.split('-').length === 5
-    )).toBe(true);
+    expect(uintArrayAsHex).toBeCalledTimes(6);
   });
 });
