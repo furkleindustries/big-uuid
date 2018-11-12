@@ -8,19 +8,20 @@ import {
   IUUIDOptions,
 } from './UUIDOptions/IUUIDOptions';
 import {
-  uintArrayAsNumber,
-} from '../uintArrayAsNumber';
+  uintArrayAsBigNumber,
+} from '../uintArrayAsBigNumber';
 import {
   UUIDVersions,
 } from '../Enums/UUIDVersions';
 
 export const makeVersionOneUUIDValues = (options: IUUIDOptions): IUUIDComponentValues & { shouldWrite: boolean, } => {
-  const timestamp = options.timestampGetter(options.version);
   const nodeIdentifier = options.nodeIdentifierGetter(options.version);
+  const timestamp = options.timestampGetter(options.version);
   const lastResults = getLastResults();
   let clockSequence = (() => {
     if (lastResults &&
-        uintArrayAsNumber(lastResults.nodeIdentifier) !== uintArrayAsNumber(nodeIdentifier)) {
+        uintArrayAsBigNumber(lastResults.nodeIdentifier).neq(uintArrayAsBigNumber(nodeIdentifier)))
+    {
       /* Create a random clock sequence if the node identifier has changed. */ 
       return options.clockSequenceGetter(UUIDVersions.Four);
     } else {
@@ -40,21 +41,24 @@ export const makeVersionOneUUIDValues = (options: IUUIDOptions): IUUIDComponentV
     if ((oldTimestamp && 'BYTES_PER_ELEMENT' in oldTimestamp) &&
         (oldClockSequence && 'BYTES_PER_ELEMENT' in oldClockSequence))
     {
-      const oldTimeInt = uintArrayAsNumber(oldTimestamp);
-      const newTimeInt = uintArrayAsNumber(timestamp);
-      if (oldTimeInt.greaterOrEquals(newTimeInt)) {
+      const oldTimeInt = uintArrayAsBigNumber(oldTimestamp);
+      const newTimeInt = uintArrayAsBigNumber(timestamp);
+      /* istanbul ignore else */
+      if (oldTimeInt.geq(newTimeInt)) {
         /* Increment the clock sequence given that the timestamp is invalid. */
         clockSequence[1] += 1;
         if (clockSequence[1] === 0) {
           /* Increment the upper byte if the lower byte wrapped around. */
           clockSequence[0] += 1;
         }
-      }
 
-      shouldWrite = true;
-    } else if (
-      uintArrayAsNumber(clockSequence).notEquals(uintArrayAsNumber(lastResults.clockSequence)) ||
-      uintArrayAsNumber(nodeIdentifier).notEquals(uintArrayAsNumber(lastResults.nodeIdentifier)))
+        shouldWrite = true;
+      }
+    }
+
+    if (
+      uintArrayAsBigNumber(clockSequence).neq(uintArrayAsBigNumber(lastResults.clockSequence)) ||
+      uintArrayAsBigNumber(nodeIdentifier).neq(uintArrayAsBigNumber(lastResults.nodeIdentifier)))
     {
       shouldWrite = true;
     }

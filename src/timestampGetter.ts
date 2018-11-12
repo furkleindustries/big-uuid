@@ -1,3 +1,4 @@
+import bigInt from 'big-integer';
 import {
   convertBinStrToUint8Array,
 } from './convertBinStrToUint8Array';
@@ -17,26 +18,20 @@ import {
   UUIDVersions,
 } from './Enums/UUIDVersions';
 
-export function timestampGetter(
+export const timestampGetter = (
   version: UUIDVersions,
   hash?: string,
-): Uint8Array
+): Uint8Array =>
 {
   if (!isUUIDVersion(version)) {
     throw new Error(strings.UUID_VERSION_INVALID);
   }
-  
+
   let timestamp: Uint8Array;
   if (version === UUIDVersions.One) {
     const currentTimestamp = getHundredsOfNanosecondsSinceGregorianReform();
-    const timestampStr = currentTimestamp.toString(2).padStart(60, '0');
-    const inputArr = [];
-    for (let ii = 60; ii > 0; ii -= 8) {
-      const byte = timestampStr.slice(ii - 8, ii).padStart(8, '0');
-      inputArr.unshift(parseInt(byte, 2));
-    }
-
-    timestamp = new Uint8Array(inputArr);  
+    const timestampStr = currentTimestamp.toString(2);
+    timestamp = convertBinStrToUint8Array(timestampStr);
   } else if (version === UUIDVersions.Three || version === UUIDVersions.Five) {
     /* Version is 3 or 5. */
     if (!hash) {
@@ -49,16 +44,25 @@ export function timestampGetter(
     /* time_mid */
     timestampStr = hash.slice(8, 12) + timestampStr;
     /* time_hi */
-    timestampStr = hash.slice(12, 16) + timestampStr;
-    const timestampBinStr = parseInt(timestampStr, 16).toString(2).padStart(60, '0');
+    timestampStr = hash.slice(12, 16) + timestampStr;console.log(timestampStr)
+    const timestampBinStr = bigInt(timestampStr, 16).toString(2);
     timestamp = convertBinStrToUint8Array(timestampBinStr);
-  } else {
-    /* version is 4 */
+  } else if (version === UUIDVersions.Four) {
     timestamp = randomBytesGenerator(8);
-    /* Only take the most significant 4 bits of the last byte as the timestamp
-     * is only 60 bits. */
-    timestamp[7] = parseInt(timestamp[7].toString(2).slice(0, 4), 2);
+  } else {
+    /* Version is nil. */
+    timestamp = new Uint8Array([ 0, 0, 0, 0, 0, 0, 0, 0, ]);
   }
+
+  /* Clamp the result to 60 bits. */
+  timestamp[0] = Math.min(32, timestamp[0]);
+  timestamp = new Uint8Array(
+    /* Fill missing most-significant with 0s. */
+    '0'.repeat(8 - timestamp.length)
+      .split('')
+      .map(parseInt)
+      .concat(Array.prototype.slice.call(timestamp))
+  );
 
   return timestamp;
 }

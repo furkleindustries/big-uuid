@@ -25,9 +25,9 @@ import {
 } from '../src/randomBytesGenerator';
 jest.mock('../src/randomBytesGenerator');
 import {
-  uintArrayAsNumber,
-} from '../src/uintArrayAsNumber';
-jest.mock('../src/uintArrayAsNumber');
+  uintArrayAsBigNumber,
+} from '../src/uintArrayAsBigNumber';
+jest.mock('../src/uintArrayAsBigNumber');
 
 describe('clockSequenceGetter tests.', () => {
   beforeEach(() => {
@@ -39,8 +39,8 @@ describe('clockSequenceGetter tests.', () => {
     (getLastResults as any).mockReturnValue(null);
     (randomBytesGenerator as any).mockClear();
     (randomBytesGenerator as any).mockReturnValue(new Uint8Array([ 2, 4, ]));
-    (uintArrayAsNumber as any).mockClear();
-    (uintArrayAsNumber as any).mockImplementation(() => 256);
+    (uintArrayAsBigNumber as any).mockClear();
+    (uintArrayAsBigNumber as any).mockImplementation(() => 256);
   });
 
   it('Throws if the version argument does not meet the isUUIDVersion type guard.', () => {
@@ -79,7 +79,7 @@ describe('clockSequenceGetter tests.', () => {
   });
 
   it('Throws if the version is 5 and no hash is provided.', () => {
-    const func = () => clockSequenceGetter(UUIDVersions.Three);
+    const func = () => clockSequenceGetter(UUIDVersions.Five);
     expect(func).toThrow(strings.HASH_ARGUMENT_MISSING);
   });
 
@@ -89,5 +89,9 @@ describe('clockSequenceGetter tests.', () => {
     const cs = clockSequenceGetter(UUIDVersions.Three, '0123456789abcdef01234567890');
     /* 0x123 is 0b100100011. This is padded to 14 bits in length. */
     expect(cs).toEqual('00000100100011');
+  });
+
+  it('Returns [ 0, 0, ] if the version is nil.', () => {
+    expect(clockSequenceGetter(UUIDVersions.Nil)).toEqual(new Uint8Array([ 0, 0, ]));
   });
 });

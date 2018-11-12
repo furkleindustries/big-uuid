@@ -25,17 +25,17 @@ import {
 } from '../../src/UUID/makeVersionThreeOrFiveUUIDValues';
 jest.mock('../../src/UUID/makeVersionThreeOrFiveUUIDValues');
 import {
-  makeVersionFourUUIDValues,
-} from '../../src/UUID/makeVersionFourUUIDValues';
-jest.mock('../../src/UUID/makeVersionFourUUIDValues');
-import {
-  makeVersionNilUUIDValues,
-} from '../../src/UUID/makeVersionNilUUIDValues';
-jest.mock('../../src/UUID/makeVersionNilUUIDValues');
+  makeVersionFourOrNilUUIDValues,
+} from '../../src/UUID/makeVersionFourOrNilUUIDValues';
+jest.mock('../../src/UUID/makeVersionFourOrNilUUIDValues');
 import {
   mergeUUIDOptions,
 } from '../../src/UUID/UUIDOptions/mergeUUIDOptions';
 jest.mock('../../src/UUID/UUIDOptions/mergeUUIDOptions');
+import {
+  uintArrayAsHex,
+} from '../../src/uintArrayAsHex';
+jest.mock('../../src/uintArrayAsHex');
 import {
   UUIDOptions,
 } from '../../src/UUID/UUIDOptions/UUIDOptions';
@@ -57,22 +57,22 @@ describe('UUID unit tests.', () => {
   };
 
   beforeEach(() => {
-    (isNode as any).mockReturnValue(true);
     (isNode as any).mockClear();
-    (isUUIDVersion as any).mockReturnValue(true);
+    (isNode as any).mockReturnValue(true);
     (isUUIDVersion as any).mockClear();
-    (makeVersionOneUUIDValues as any).mockReturnValue(baseMakeValues);
+    (isUUIDVersion as any).mockReturnValue(true);
     (makeVersionOneUUIDValues as any).mockClear();
-    (makeVersionThreeOrFiveUUIDValues as any).mockReturnValue(baseMakeValues);
+    (makeVersionOneUUIDValues as any).mockReturnValue(baseMakeValues);
     (makeVersionThreeOrFiveUUIDValues as any).mockClear();
-    (makeVersionFourUUIDValues as any).mockReturnValue(baseMakeValues);
-    (makeVersionFourUUIDValues as any).mockClear();
-    (makeVersionNilUUIDValues as any).mockReturnValue(baseMakeValues);
-    (makeVersionNilUUIDValues as any).mockClear();
-    (mergeUUIDOptions as any).mockReturnValue(mockUUIDOptions);
+    (makeVersionThreeOrFiveUUIDValues as any).mockReturnValue(baseMakeValues);
+    (makeVersionFourOrNilUUIDValues as any).mockClear();
+    (makeVersionFourOrNilUUIDValues as any).mockReturnValue(baseMakeValues);
     (mergeUUIDOptions as any).mockClear();
-    (UUIDOptions as any).mockImplementation(() => mockUUIDOptions);
+    (mergeUUIDOptions as any).mockReturnValue(mockUUIDOptions);
+    (uintArrayAsHex as any).mockClear();
+    (uintArrayAsHex as any).mockReturnValue('testbar');
     (UUIDOptions as any).mockClear();
+    (UUIDOptions as any).mockImplementation(() => mockUUIDOptions);
     (writeNewResults as any).mockClear();
   });
 
@@ -167,12 +167,12 @@ describe('UUID unit tests.', () => {
     (UUIDOptions as any).mockImplementationOnce(() => opts);
 
     new UUID();
-    expect((makeVersionFourUUIDValues as any).mock.calls).toEqual([
+    expect((makeVersionFourOrNilUUIDValues as any).mock.calls).toEqual([
       [ opts, ],
     ]);
   });
 
-  it('Passes the options to makeVersionNilUUIDValues if the version is 4.', () => {
+  it('Passes the options to makeVersionFourOrNilUUIDValues if the version is 4.', () => {
     const opts = { version: UUIDVersions.Nil, };
 
     (UUIDOptions as any).mockImplementationOnce(() => opts);
@@ -180,7 +180,13 @@ describe('UUID unit tests.', () => {
     new UUID();
 
     /* No call signature for nil as it needs no arguments. */
-    expect((makeVersionNilUUIDValues as any).mock.calls).toEqual([ [], ]);
+    expect((makeVersionFourOrNilUUIDValues as any).mock.calls).toEqual([
+      [
+        {
+          version: UUIDVersions.Nil,
+        },
+      ],
+    ]);
   });
 
   it('The version getter returns the __version property.', () => {
@@ -268,14 +274,9 @@ describe('UUID unit tests.', () => {
     )).toBe(true);
   });
 
-  it('Outputs a string representation of the UUID when toString is called.', () => {
-    const uuid = new UUID();
-    const str = uuid.toString();
-    expect(Boolean(
-      str &&
-      typeof str === 'string' &&
-      str.length === 36 &&
-      str.split('-').length === 5
-    )).toBe(true);
+  it('Calls uintArrayAsHex to convert segments when toString is called.', () => {
+    new UUID().toString();
+    /* Six times for six segments. */
+    expect(uintArrayAsHex).toBeCalledTimes(6);
   });
 });

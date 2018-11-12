@@ -23,21 +23,21 @@ export const writeNewResults = (lastResults: TUUIDLastResults) => {
   }
 
   const formattedLastResults = {
-    clockSequence:  Array.from(lastResults.clockSequence),
-    nodeIdentifier: Array.from(lastResults.nodeIdentifier),
-    timestamp:      Array.from(lastResults.timestamp),
+    clockSequence: Array.prototype.slice.call(lastResults.clockSequence),
+    nodeIdentifier: Array.prototype.slice.call(lastResults.nodeIdentifier),
+    timestamp: Array.prototype.slice.call(lastResults.timestamp),
   };
 
   try {
     writeFileSync(
-      join(homedir(), 'ifid'),
+      join(homedir(), 'uuid'),
       JSON.stringify(formattedLastResults),
       {
         encoding: 'utf8',
       },
     );
   } catch (e) {
-    console.error('Could not save results.');
+    throw new Error('Could not write results.');
   }
 }
 

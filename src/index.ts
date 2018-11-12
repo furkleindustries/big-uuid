@@ -7,16 +7,16 @@ export * from './UUID/UUIDOptions/UUIDOptions';
 export * from './UUID/UUIDOptions/IUUIDOptions';
 
 export * from './Enums/NamespaceIds';
+export * from './Enums/UUIDVersions';
 
 export * from './clockSequenceGetter';
 export * from './getHashFromNamespaceIdAndName';
 export * from './getHundredsOfNanosecondsSinceGregorianReform';
 export * from './nodeIdentifierGetter';
 export * from './timestampGetter';
-export * from './uintArrayAsNumber';
+export * from './uintArrayAsBigNumber';
 
 export * from './TypeAliases/TNamespaceId';
-export * from './TypeAliases/TUUIDVersion';
 
 /* Export required crypto-js libraries to reduce bundle size in `ifid`.
  * This shouldn't be necessary but there's something weird about the way

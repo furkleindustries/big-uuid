@@ -14,8 +14,8 @@ import {
   strings,
 } from './strings';
 import {
-  uintArrayAsNumber,
-} from './uintArrayAsNumber';
+  uintArrayAsBigNumber,
+} from './uintArrayAsBigNumber';
 import {
   UUIDVersions,
 } from './Enums/UUIDVersions';
@@ -34,7 +34,7 @@ export const clockSequenceGetter = (
     const getRandomSeq = () => {
       /* If the clock sequence cannot be found, or a non-V1 ID is being 
        * generated, generate a random new clock sequence. */
-      const clockSequenceNum = uintArrayAsNumber(randomBytesGenerator(2));
+      const clockSequenceNum = uintArrayAsBigNumber(randomBytesGenerator(2));
       const clockSequenceBin = clockSequenceNum.toString(2).slice(0, 14);
       return new Uint8Array([
         parseInt(clockSequenceBin.slice(0, 6), 2),
@@ -51,8 +51,7 @@ export const clockSequenceGetter = (
     } else {
       clockSequence = getRandomSeq();
     }
-  } else {
-    /* Version is 3 or 5. */
+  } else if (version === UUIDVersions.Three || version === UUIDVersions.Five) {
     if (!hash) {
       throw new Error(strings.HASH_ARGUMENT_MISSING);
     }
@@ -65,6 +64,9 @@ export const clockSequenceGetter = (
     clockSequenceStr += hash.slice(18, 20);
     const clockSequenceBinStr = parseInt(clockSequenceStr, 16).toString(2).padStart(14, '0');
     clockSequence = convertBinStrToUint8Array(clockSequenceBinStr);
+  } else {
+    /* Version is nil. */
+    clockSequence = new Uint8Array([ 0, 0, ]);
   }
 
   return clockSequence;

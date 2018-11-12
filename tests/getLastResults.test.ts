@@ -2,33 +2,46 @@ import {
   getLastResults,
 } from '../src/getLastResults';
 
-import * as fs from 'fs';
+import {
+  readFileSync,
+} from 'fs';
 jest.mock('fs');
 import {
   isValidLastResults,
 } from '../src/TypeGuards/isValidLastResults';
 jest.mock('../src/TypeGuards/isValidLastResults');
+import {
+  homedir,
+} from 'os';
+jest.mock('os');
 
 describe('getLastResults unit tests.', () => {
   beforeEach(() => {
-    (fs.readFileSync as any).mockClear();
-    (fs.readFileSync as any).mockReturnValue();
+    (readFileSync as any).mockClear();
+    (readFileSync as any).mockReturnValue();
     (isValidLastResults as any).mockClear();
     (isValidLastResults as any).mockReturnValue(true);
-  })
+    (homedir as any).mockClear();
+    (homedir as any).mockReturnValue('/');
+  });
+
+  it('Calls homedir to find the uuid file.', () => {
+    getLastResults();
+    expect(homedir).toBeCalledTimes(1);
+  });
   
   it('Reads from a file called "uuid".', () => {
     getLastResults();
-    expect(/uuid$/.test((fs.readFileSync as any).mock.calls[0][0])).toBe(true);
+    expect(/uuid$/.test((readFileSync as any).mock.calls[0][0])).toBe(true);
   });
-  
+
   it('Returns an empty object if isValidLastResults returns false.', () => {
     (isValidLastResults as any).mockReturnValue(false);
     expect(getLastResults()).toEqual({});
   });
 
   it('Returns the object serialized to the uuid file if isValidLastResults returns true.', () => {
-    (fs.readFileSync as any).mockReturnValue('{ "foo": "bar" }');
+    (readFileSync as any).mockReturnValue('{ "foo": "bar" }');
     expect(getLastResults()).toEqual({
       foo: 'bar',
     });

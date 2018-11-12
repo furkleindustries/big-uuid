@@ -14,11 +14,8 @@ import {
   IUUIDOptions,
 } from './UUIDOptions/IUUIDOptions';
 import {
-  makeVersionFourUUIDValues,
-} from './makeVersionFourUUIDValues';
-import {
-  makeVersionNilUUIDValues,
-} from './makeVersionNilUUIDValues';
+  makeVersionFourOrNilUUIDValues,
+} from './makeVersionFourOrNilUUIDValues';
 import {
   makeVersionOneUUIDValues,
 } from './makeVersionOneUUIDValues';
@@ -35,8 +32,8 @@ import {
   uintArrayAsHex,
 } from '../uintArrayAsHex';
 import {
-  uintArrayAsNumber,
-} from '../uintArrayAsNumber';
+  uintArrayAsBigNumber,
+} from '../uintArrayAsBigNumber';
 import {
   UUIDOptions,
 } from './UUIDOptions/UUIDOptions';
@@ -93,15 +90,13 @@ export class UUID implements IUUID {
       if (version === UUIDVersions.One) {
         return makeVersionOneUUIDValues(options);
       } else if (version === UUIDVersions.Three ||
-        version === UUIDVersions.Five)
+                 version === UUIDVersions.Five)
       {
         return makeVersionThreeOrFiveUUIDValues(options); 
-      } else if (version === UUIDVersions.Four) {
-        return makeVersionFourUUIDValues(options);
       } else {
-        /* Nil */
-        return makeVersionNilUUIDValues();
-       } 
+        /* Version four or nil. */
+        return makeVersionFourOrNilUUIDValues(options);
+      }
     })();
 
     this.__clockSequence = clockSequence;
@@ -132,20 +127,17 @@ export class UUID implements IUUID {
 
   /* 4 bytes */
   get timeLow(): Uint8Array {
-    const timeLow = this.timestamp.slice(4, 8);
-    return timeLow;
+    return this.timestamp.slice(4, 8);
   }
 
   /* 2 bytes */
   get timeMid(): Uint8Array {
-    const timeMid = this.timestamp.slice(2, 4);
-    return timeMid;
+    return this.timestamp.slice(2, 4);
   }
 
   /* 12 bits */
   get timeHigh(): Uint8Array {
-    const timeHigh = this.timestamp.slice(0, 2);
-    return timeHigh;
+    return this.timestamp.slice(0, 2);
   }
 
   /* 14 bits */
@@ -172,11 +164,11 @@ export class UUID implements IUUID {
 
   /* 1 byte. */
   get clockSequenceHighAndReserved(): Uint8Array {
-    const clockHigh = uintArrayAsNumber(this.clockSequenceHigh).toString(2);
+    const clockHigh = uintArrayAsBigNumber(this.clockSequenceHigh).toString(2);
     /* istanbul ignore next */
     const reserved = this.version === UUIDVersions.Nil ?
       '0' :
-      uintArrayAsNumber(this.reserved).toString(2);
+      uintArrayAsBigNumber(this.reserved).toString(2);
 
     const byte = clockHigh.padStart(6, '0') + reserved.padStart(2, '0');
     return new Uint8Array([ parseInt(byte, 2), ]);

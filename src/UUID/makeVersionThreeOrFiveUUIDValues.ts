@@ -15,7 +15,7 @@ import {
 } from '../Enums/UUIDVersions';
 
 export const makeVersionThreeOrFiveUUIDValues = (options: IUUIDOptions): IUUIDComponentValues => {
-  if (!options.namespaceId) {
+  if (!options || !options.namespaceId) {
     throw new Error(strings.NAMESPACE_ID_MISSING);
   } else if (!options.name) {
     throw new Error(strings.NAME_MISSING);
