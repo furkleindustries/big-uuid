@@ -35,8 +35,8 @@ import {
   uintArrayAsHex,
 } from '../uintArrayAsHex';
 import {
-  uintArrayAsNumber,
-} from '../uintArrayAsNumber';
+  uintArrayAsBigNumber,
+} from '../uintArrayAsBigNumber';
 import {
   UUIDOptions,
 } from './UUIDOptions/UUIDOptions';
@@ -169,11 +169,11 @@ export class UUID implements IUUID {
 
   /* 1 byte. */
   get clockSequenceHighAndReserved(): Uint8Array {
-    const clockHigh = uintArrayAsNumber(this.clockSequenceHigh).toString(2);
+    const clockHigh = uintArrayAsBigNumber(this.clockSequenceHigh).toString(2);
     /* istanbul ignore next */
     const reserved = this.version === UUIDVersions.Nil ?
       '0' :
-      uintArrayAsNumber(this.reserved).toString(2);
+      uintArrayAsBigNumber(this.reserved).toString(2);
 
     const byte = clockHigh.padStart(6, '0') + reserved.padStart(2, '0');
     return new Uint8Array([ parseInt(byte, 2), ]);

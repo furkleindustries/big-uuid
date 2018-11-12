@@ -14,8 +14,8 @@ import {
   strings,
 } from './strings';
 import {
-  uintArrayAsNumber,
-} from './uintArrayAsNumber';
+  uintArrayAsBigNumber,
+} from './uintArrayAsBigNumber';
 import {
   UUIDVersions,
 } from './Enums/UUIDVersions';
@@ -34,7 +34,7 @@ export const clockSequenceGetter = (
     const getRandomSeq = () => {
       /* If the clock sequence cannot be found, or a non-V1 ID is being 
        * generated, generate a random new clock sequence. */
-      const clockSequenceNum = uintArrayAsNumber(randomBytesGenerator(2));
+      const clockSequenceNum = uintArrayAsBigNumber(randomBytesGenerator(2));
       const clockSequenceBin = clockSequenceNum.toString(2).slice(0, 14);
       return new Uint8Array([
         parseInt(clockSequenceBin.slice(0, 6), 2),

@@ -37,6 +37,10 @@ import {
 } from '../../src/UUID/UUIDOptions/mergeUUIDOptions';
 jest.mock('../../src/UUID/UUIDOptions/mergeUUIDOptions');
 import {
+  uintArrayAsHex,
+} from '../../src/uintArrayAsHex';
+jest.mock('../../src/uintArrayAsHex');
+import {
   UUIDOptions,
 } from '../../src/UUID/UUIDOptions/UUIDOptions';
 jest.mock('../../src/UUID/UUIDOptions/UUIDOptions');

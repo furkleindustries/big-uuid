@@ -25,9 +25,9 @@ import {
 } from '../src/randomBytesGenerator';
 jest.mock('../src/randomBytesGenerator');
 import {
-  uintArrayAsNumber,
-} from '../src/uintArrayAsNumber';
-jest.mock('../src/uintArrayAsNumber');
+  uintArrayAsBigNumber,
+} from '../src/uintArrayAsBigNumber';
+jest.mock('../src/uintArrayAsBigNumber');
 
 describe('clockSequenceGetter tests.', () => {
   beforeEach(() => {
@@ -39,8 +39,8 @@ describe('clockSequenceGetter tests.', () => {
     (getLastResults as any).mockReturnValue(null);
     (randomBytesGenerator as any).mockClear();
     (randomBytesGenerator as any).mockReturnValue(new Uint8Array([ 2, 4, ]));
-    (uintArrayAsNumber as any).mockClear();
-    (uintArrayAsNumber as any).mockImplementation(() => 256);
+    (uintArrayAsBigNumber as any).mockClear();
+    (uintArrayAsBigNumber as any).mockImplementation(() => 256);
   });
 
   it('Throws if the version argument does not meet the isUUIDVersion type guard.', () => {

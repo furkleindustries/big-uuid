@@ -8,8 +8,8 @@ import {
   IUUIDOptions,
 } from './UUIDOptions/IUUIDOptions';
 import {
-  uintArrayAsNumber,
-} from '../uintArrayAsNumber';
+  uintArrayAsBigNumber,
+} from '../uintArrayAsBigNumber';
 import {
   UUIDVersions,
 } from '../Enums/UUIDVersions';
@@ -20,7 +20,7 @@ export const makeVersionOneUUIDValues = (options: IUUIDOptions): IUUIDComponentV
   const lastResults = getLastResults();
   let clockSequence = (() => {
     if (lastResults &&
-        uintArrayAsNumber(lastResults.nodeIdentifier) !== uintArrayAsNumber(nodeIdentifier)) {
+        uintArrayAsBigNumber(lastResults.nodeIdentifier) !== uintArrayAsBigNumber(nodeIdentifier)) {
       /* Create a random clock sequence if the node identifier has changed. */ 
       return options.clockSequenceGetter(UUIDVersions.Four);
     } else {
@@ -40,8 +40,8 @@ export const makeVersionOneUUIDValues = (options: IUUIDOptions): IUUIDComponentV
     if ((oldTimestamp && 'BYTES_PER_ELEMENT' in oldTimestamp) &&
         (oldClockSequence && 'BYTES_PER_ELEMENT' in oldClockSequence))
     {
-      const oldTimeInt = uintArrayAsNumber(oldTimestamp);
-      const newTimeInt = uintArrayAsNumber(timestamp);
+      const oldTimeInt = uintArrayAsBigNumber(oldTimestamp);
+      const newTimeInt = uintArrayAsBigNumber(timestamp);
       if (oldTimeInt.greaterOrEquals(newTimeInt)) {
         /* Increment the clock sequence given that the timestamp is invalid. */
         clockSequence[1] += 1;
@@ -53,8 +53,8 @@ export const makeVersionOneUUIDValues = (options: IUUIDOptions): IUUIDComponentV
 
       shouldWrite = true;
     } else if (
-      uintArrayAsNumber(clockSequence).notEquals(uintArrayAsNumber(lastResults.clockSequence)) ||
-      uintArrayAsNumber(nodeIdentifier).notEquals(uintArrayAsNumber(lastResults.nodeIdentifier)))
+      uintArrayAsBigNumber(clockSequence).notEquals(uintArrayAsBigNumber(lastResults.clockSequence)) ||
+      uintArrayAsBigNumber(nodeIdentifier).notEquals(uintArrayAsBigNumber(lastResults.nodeIdentifier)))
     {
       shouldWrite = true;
     }
