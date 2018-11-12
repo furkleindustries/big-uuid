@@ -1,11 +1,13 @@
 import {
   mergeUUIDOptions,
 } from '../../../src/UUID/UUIDOptions/mergeUUIDOptions';
+import {
+  UUIDVersions,
+} from '../../../src/Enums/UUIDVersions';
 
 import {
   isUUIDVersion,
 } from '../../../src/TypeGuards/isUUIDVersion';
-import UUIDVersions from '../../../src/Enums/UUIDVersions';
 jest.mock('../../../src/TypeGuards/isUUIDVersion');
 
 describe('mergeUUIDOptions tests.', () => {

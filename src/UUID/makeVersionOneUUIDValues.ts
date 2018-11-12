@@ -15,12 +15,13 @@ import {
 } from '../Enums/UUIDVersions';
 
 export const makeVersionOneUUIDValues = (options: IUUIDOptions): IUUIDComponentValues & { shouldWrite: boolean, } => {
-  const timestamp = options.timestampGetter(options.version);
   const nodeIdentifier = options.nodeIdentifierGetter(options.version);
+  const timestamp = options.timestampGetter(options.version);
   const lastResults = getLastResults();
   let clockSequence = (() => {
     if (lastResults &&
-        uintArrayAsBigNumber(lastResults.nodeIdentifier) !== uintArrayAsBigNumber(nodeIdentifier)) {
+        uintArrayAsBigNumber(lastResults.nodeIdentifier).neq(uintArrayAsBigNumber(nodeIdentifier)))
+    {
       /* Create a random clock sequence if the node identifier has changed. */ 
       return options.clockSequenceGetter(UUIDVersions.Four);
     } else {
@@ -42,19 +43,22 @@ export const makeVersionOneUUIDValues = (options: IUUIDOptions): IUUIDComponentV
     {
       const oldTimeInt = uintArrayAsBigNumber(oldTimestamp);
       const newTimeInt = uintArrayAsBigNumber(timestamp);
-      if (oldTimeInt.greaterOrEquals(newTimeInt)) {
+      /* istanbul ignore else */
+      if (oldTimeInt.geq(newTimeInt)) {
         /* Increment the clock sequence given that the timestamp is invalid. */
         clockSequence[1] += 1;
         if (clockSequence[1] === 0) {
           /* Increment the upper byte if the lower byte wrapped around. */
           clockSequence[0] += 1;
         }
-      }
 
-      shouldWrite = true;
-    } else if (
-      uintArrayAsBigNumber(clockSequence).notEquals(uintArrayAsBigNumber(lastResults.clockSequence)) ||
-      uintArrayAsBigNumber(nodeIdentifier).notEquals(uintArrayAsBigNumber(lastResults.nodeIdentifier)))
+        shouldWrite = true;
+      }
+    }
+
+    if (
+      uintArrayAsBigNumber(clockSequence).neq(uintArrayAsBigNumber(lastResults.clockSequence)) ||
+      uintArrayAsBigNumber(nodeIdentifier).neq(uintArrayAsBigNumber(lastResults.nodeIdentifier)))
     {
       shouldWrite = true;
     }
