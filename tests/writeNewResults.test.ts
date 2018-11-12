@@ -27,7 +27,7 @@ describe('writeNewResults unit tests.', () => {
     (writeFileSync as any).mockClear();
     (isValidLastResults as any).mockClear();
     (isValidLastResults as any).mockReturnValue(true);
-    (join as any).mockImplementation((...aa) => aa.join('/'));
+    (join as any).mockImplementation((...aa: any[]) => aa.join('/'));
   });
 
   it('Throws if the isValidLastResults type guard fails on the argument.', () => {
