@@ -27,6 +27,7 @@ describe('writeNewResults unit tests.', () => {
     (writeFileSync as any).mockClear();
     (isValidLastResults as any).mockClear();
     (isValidLastResults as any).mockReturnValue(true);
+    (homedir as any).mockClear();
     (join as any).mockImplementation((...aa: any[]) => aa.join('/'));
   });
 
@@ -34,6 +35,17 @@ describe('writeNewResults unit tests.', () => {
     (isValidLastResults as any).mockReturnValue(false);
     const func = () => writeNewResults(null as any);
     expect(func).toThrow(strings.UUID_LAST_RESULTS_INVALID);
+  });
+
+  it('Calls homedir to find the location of the uuid file..', () => {
+    const last = {
+      clockSequence: [ 1, 1, ],
+      nodeIdentifier: [ 2, 2, 2, 2, 2, 2, ],
+      timestamp: [ 3, 3, 3, 3, 3, 3, 3, 3, ],
+    };
+
+    writeNewResults(last as any);
+    expect(homedir).toBeCalledTimes(1);
   });
 
   it('Writes the last results in JSON to the uuid file, in utf8.', () => {
@@ -44,7 +56,7 @@ describe('writeNewResults unit tests.', () => {
     };
 
     writeNewResults(last as any);
-    expect((writeFileSync as any).mock.calls).toMatchObject([
+    expect((writeFileSync as any).mock.calls).toEqual([
       [
         /* In actuality this will have the result of homedir() before it. */
         '/uuid',
