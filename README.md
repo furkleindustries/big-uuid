@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/furkleindustries/big-uuid.svg?branch=master)](https://travis-ci.org/furkleindustries/big-uuid)
+[![Code coverage](https://codecov.io/gh/furkleindustries/big-uuid/branch/master/graph/badge.svg)](https://codecov.io/gh/furkleindustries/big-uuid/)
 
 # big-uuid
 
