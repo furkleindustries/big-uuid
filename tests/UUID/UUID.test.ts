@@ -75,6 +75,7 @@ describe('UUID unit tests.', () => {
     (makeVersionNilUUIDValues as any).mockClear();
     (mergeUUIDOptions as any).mockReturnValue(mockUUIDOptions);
     (mergeUUIDOptions as any).mockClear();
+    (uintArrayAsHex as any).mockClear();
     (UUIDOptions as any).mockImplementation(() => mockUUIDOptions);
     (UUIDOptions as any).mockClear();
     (writeNewResults as any).mockClear();
