@@ -281,8 +281,8 @@ describe('UUID unit tests.', () => {
   });
 
   it('Calls uintArrayAsHex to convert segments when toString is called.', () => {
-    const uuid = new UUID();
-    const str = uuid.toString();
+    new UUID().toString();
+    /* Six times for six segments. */
     expect(uintArrayAsHex).toBeCalledTimes(6);
   });
 });
