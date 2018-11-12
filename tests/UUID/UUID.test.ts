@@ -180,7 +180,13 @@ describe('UUID unit tests.', () => {
     new UUID();
 
     /* No call signature for nil as it needs no arguments. */
-    expect((makeVersionNilUUIDValues as any).mock.calls).toEqual([ [], ]);
+    expect((makeVersionNilUUIDValues as any).mock.calls).toEqual([
+      [
+        {
+          version: UUIDVersions.Nil,
+        },
+      ],
+    ]);
   });
 
   it('The version getter returns the __version property.', () => {

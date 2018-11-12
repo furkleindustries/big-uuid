@@ -79,7 +79,7 @@ describe('clockSequenceGetter tests.', () => {
   });
 
   it('Throws if the version is 5 and no hash is provided.', () => {
-    const func = () => clockSequenceGetter(UUIDVersions.Three);
+    const func = () => clockSequenceGetter(UUIDVersions.Five);
     expect(func).toThrow(strings.HASH_ARGUMENT_MISSING);
   });
 
@@ -89,5 +89,9 @@ describe('clockSequenceGetter tests.', () => {
     const cs = clockSequenceGetter(UUIDVersions.Three, '0123456789abcdef01234567890');
     /* 0x123 is 0b100100011. This is padded to 14 bits in length. */
     expect(cs).toEqual('00000100100011');
+  });
+
+  it('Returns [ 0, 0, ] if the version is nil.', () => {
+    expect(clockSequenceGetter(UUIDVersions.Nil)).toEqual(new Uint8Array([ 0, 0, ]));
   });
 });

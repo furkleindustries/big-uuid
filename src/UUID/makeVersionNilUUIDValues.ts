@@ -1,11 +1,14 @@
 import {
   IUUIDComponentValues,
 } from './IUUIDComponentValues';
+import {
+  IUUIDOptions,
+} from './UUIDOptions/IUUIDOptions';
 
-export const makeVersionNilUUIDValues = (): IUUIDComponentValues => ({
-  clockSequence: new Uint8Array([ 0, 0, ]),
-  nodeIdentifier: new Uint8Array([ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ]),
-  timestamp: new Uint8Array([ 0, 0, 0, 0, 0, 0, 0, 0, ]),
+export const makeVersionNilUUIDValues = (options: IUUIDOptions): IUUIDComponentValues => ({
+  clockSequence: options.clockSequenceGetter(options.version),
+  nodeIdentifier: options.nodeIdentifierGetter(options.version),
+  timestamp: options.timestampGetter(options.version),
 });
 
 export default makeVersionNilUUIDValues;

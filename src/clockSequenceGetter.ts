@@ -51,8 +51,7 @@ export const clockSequenceGetter = (
     } else {
       clockSequence = getRandomSeq();
     }
-  } else {
-    /* Version is 3 or 5. */
+  } else if (version === UUIDVersions.Three || version === UUIDVersions.Five) {
     if (!hash) {
       throw new Error(strings.HASH_ARGUMENT_MISSING);
     }
@@ -65,6 +64,9 @@ export const clockSequenceGetter = (
     clockSequenceStr += hash.slice(18, 20);
     const clockSequenceBinStr = parseInt(clockSequenceStr, 16).toString(2).padStart(14, '0');
     clockSequence = convertBinStrToUint8Array(clockSequenceBinStr);
+  } else {
+    /* Version is nil. */
+    clockSequence = new Uint8Array([ 0, 0, ]);
   }
 
   return clockSequence;

@@ -57,6 +57,8 @@ export function nodeIdentifierGetter(
     nodeIdentifier = convertBinStrToUint8Array(nodeIdentifierBinStr);
   } else if (version === UUIDVersions.Four) {
     nodeIdentifier = randomBytesGenerator(6);
+  } else if (version === UUIDVersions.Nil) {
+    nodeIdentifier = new Uint8Array([ 0, 0, 0, 0, 0, 0, ]);
   } else {
     throw new Error(strings.UUID_VERSION_INVALID);
   }

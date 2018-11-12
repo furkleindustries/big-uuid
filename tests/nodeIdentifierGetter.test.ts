@@ -81,4 +81,10 @@ describe('nodeIdentifierGetter unit tests.', () => {
     const func = () => nodeIdentifierGetter(null as any);
     expect(func).toThrow(strings.UUID_VERSION_INVALID);
   });
+
+  it('Returns [ 0, 0, 0, 0, 0, 0, ] if the version is nil.', () => {
+    expect(nodeIdentifierGetter(UUIDVersions.Nil)).toEqual(
+      new Uint8Array([ 0, 0, 0, 0, 0, 0, ])
+    );
+  });
 });

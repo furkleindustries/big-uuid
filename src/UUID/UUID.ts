@@ -93,14 +93,14 @@ export class UUID implements IUUID {
       if (version === UUIDVersions.One) {
         return makeVersionOneUUIDValues(options);
       } else if (version === UUIDVersions.Three ||
-        version === UUIDVersions.Five)
+                 version === UUIDVersions.Five)
       {
         return makeVersionThreeOrFiveUUIDValues(options); 
       } else if (version === UUIDVersions.Four) {
         return makeVersionFourUUIDValues(options);
       } else {
         /* Nil */
-        return makeVersionNilUUIDValues();
+        return makeVersionNilUUIDValues(options);
        } 
     })();
 
@@ -132,20 +132,17 @@ export class UUID implements IUUID {
 
   /* 4 bytes */
   get timeLow(): Uint8Array {
-    const timeLow = this.timestamp.slice(4, 8);
-    return timeLow;
+    return this.timestamp.slice(4, 8);
   }
 
   /* 2 bytes */
   get timeMid(): Uint8Array {
-    const timeMid = this.timestamp.slice(2, 4);
-    return timeMid;
+    return this.timestamp.slice(2, 4);
   }
 
   /* 12 bits */
   get timeHigh(): Uint8Array {
-    const timeHigh = this.timestamp.slice(0, 2);
-    return timeHigh;
+    return this.timestamp.slice(0, 2);
   }
 
   /* 14 bits */
