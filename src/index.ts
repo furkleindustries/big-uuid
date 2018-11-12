@@ -14,7 +14,7 @@ export * from './getHashFromNamespaceIdAndName';
 export * from './getHundredsOfNanosecondsSinceGregorianReform';
 export * from './nodeIdentifierGetter';
 export * from './timestampGetter';
-export * from './uintArrayAsNumber';
+export * from './uintArrayAsBigNumber';
 
 export * from './TypeAliases/TNamespaceId';
 

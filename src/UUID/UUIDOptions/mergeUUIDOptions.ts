@@ -1,4 +1,7 @@
 import {
+  isUUIDVersion,
+} from '../../TypeGuards/isUUIDVersion';
+import {
   IUUIDOptions,
 } from './IUUIDOptions';
 import {
@@ -10,20 +13,20 @@ export const mergeUUIDOptions = (base: IUUIDOptions, toMerge: Partial<IUUIDOptio
 
   if (toMerge && typeof toMerge === 'object') {
     /* istanbul ignore else */
-    if (toMerge.version) {
+    if (isUUIDVersion(toMerge.version)) {
       options.version = toMerge.version;
     }
 
     if (typeof toMerge.clockSequenceGetter === 'function') {
       options.clockSequenceGetter = toMerge.clockSequenceGetter;
     }
+    
+    if (typeof toMerge.nodeIdentifierGetter === 'function') {
+      options.nodeIdentifierGetter = toMerge.nodeIdentifierGetter;
+    }
 
     if (typeof toMerge.timestampGetter === 'function') {
       options.timestampGetter = toMerge.timestampGetter;
-    }
-
-    if (typeof toMerge.nodeIdentifierGetter === 'function') {
-      options.nodeIdentifierGetter = toMerge.nodeIdentifierGetter;
     }
 
     if (options.version === UUIDVersions.Three ||
