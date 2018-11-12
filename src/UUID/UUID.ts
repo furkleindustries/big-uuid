@@ -14,11 +14,8 @@ import {
   IUUIDOptions,
 } from './UUIDOptions/IUUIDOptions';
 import {
-  makeVersionFourUUIDValues,
-} from './makeVersionFourUUIDValues';
-import {
-  makeVersionNilUUIDValues,
-} from './makeVersionNilUUIDValues';
+  makeVersionFourOrNilUUIDValues,
+} from './makeVersionFourOrNilUUIDValues';
 import {
   makeVersionOneUUIDValues,
 } from './makeVersionOneUUIDValues';
@@ -96,12 +93,10 @@ export class UUID implements IUUID {
                  version === UUIDVersions.Five)
       {
         return makeVersionThreeOrFiveUUIDValues(options); 
-      } else if (version === UUIDVersions.Four) {
-        return makeVersionFourUUIDValues(options);
       } else {
-        /* Nil */
-        return makeVersionNilUUIDValues(options);
-       } 
+        /* Version four or nil. */
+        return makeVersionFourOrNilUUIDValues(options);
+      }
     })();
 
     this.__clockSequence = clockSequence;

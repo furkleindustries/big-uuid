@@ -25,13 +25,9 @@ import {
 } from '../../src/UUID/makeVersionThreeOrFiveUUIDValues';
 jest.mock('../../src/UUID/makeVersionThreeOrFiveUUIDValues');
 import {
-  makeVersionFourUUIDValues,
-} from '../../src/UUID/makeVersionFourUUIDValues';
-jest.mock('../../src/UUID/makeVersionFourUUIDValues');
-import {
-  makeVersionNilUUIDValues,
-} from '../../src/UUID/makeVersionNilUUIDValues';
-jest.mock('../../src/UUID/makeVersionNilUUIDValues');
+  makeVersionFourOrNilUUIDValues,
+} from '../../src/UUID/makeVersionFourOrNilUUIDValues';
+jest.mock('../../src/UUID/makeVersionFourOrNilUUIDValues');
 import {
   mergeUUIDOptions,
 } from '../../src/UUID/UUIDOptions/mergeUUIDOptions';
@@ -69,10 +65,8 @@ describe('UUID unit tests.', () => {
     (makeVersionOneUUIDValues as any).mockReturnValue(baseMakeValues);
     (makeVersionThreeOrFiveUUIDValues as any).mockClear();
     (makeVersionThreeOrFiveUUIDValues as any).mockReturnValue(baseMakeValues);
-    (makeVersionFourUUIDValues as any).mockClear();
-    (makeVersionFourUUIDValues as any).mockReturnValue(baseMakeValues);
-    (makeVersionNilUUIDValues as any).mockClear();
-    (makeVersionNilUUIDValues as any).mockReturnValue(baseMakeValues);
+    (makeVersionFourOrNilUUIDValues as any).mockClear();
+    (makeVersionFourOrNilUUIDValues as any).mockReturnValue(baseMakeValues);
     (mergeUUIDOptions as any).mockClear();
     (mergeUUIDOptions as any).mockReturnValue(mockUUIDOptions);
     (uintArrayAsHex as any).mockClear();
@@ -173,12 +167,12 @@ describe('UUID unit tests.', () => {
     (UUIDOptions as any).mockImplementationOnce(() => opts);
 
     new UUID();
-    expect((makeVersionFourUUIDValues as any).mock.calls).toEqual([
+    expect((makeVersionFourOrNilUUIDValues as any).mock.calls).toEqual([
       [ opts, ],
     ]);
   });
 
-  it('Passes the options to makeVersionNilUUIDValues if the version is 4.', () => {
+  it('Passes the options to makeVersionFourOrNilUUIDValues if the version is 4.', () => {
     const opts = { version: UUIDVersions.Nil, };
 
     (UUIDOptions as any).mockImplementationOnce(() => opts);
@@ -186,7 +180,7 @@ describe('UUID unit tests.', () => {
     new UUID();
 
     /* No call signature for nil as it needs no arguments. */
-    expect((makeVersionNilUUIDValues as any).mock.calls).toEqual([
+    expect((makeVersionFourOrNilUUIDValues as any).mock.calls).toEqual([
       [
         {
           version: UUIDVersions.Nil,

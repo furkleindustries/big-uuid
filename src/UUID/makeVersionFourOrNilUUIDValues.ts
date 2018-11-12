@@ -5,10 +5,10 @@ import {
   IUUIDOptions,
 } from './UUIDOptions/IUUIDOptions';
 
-export const makeVersionNilUUIDValues = (options: IUUIDOptions): IUUIDComponentValues => ({
+export const makeVersionFourOrNilUUIDValues = (options: IUUIDOptions): IUUIDComponentValues => ({
   clockSequence: options.clockSequenceGetter(options.version),
   nodeIdentifier: options.nodeIdentifierGetter(options.version),
   timestamp: options.timestampGetter(options.version),
 });
 
-export default makeVersionNilUUIDValues;
+export default makeVersionFourOrNilUUIDValues;
