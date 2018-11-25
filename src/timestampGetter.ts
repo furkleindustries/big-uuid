@@ -44,7 +44,7 @@ export const timestampGetter = (
     /* time_mid */
     timestampStr = hash.slice(8, 12) + timestampStr;
     /* time_hi */
-    timestampStr = hash.slice(12, 16) + timestampStr;console.log(timestampStr)
+    timestampStr = hash.slice(12, 16) + timestampStr;
     const timestampBinStr = bigInt(timestampStr, 16).toString(2);
     timestamp = convertBinStrToUint8Array(timestampBinStr);
   } else if (version === UUIDVersions.Four) {
