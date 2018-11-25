@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/furkleindustries/big-uuid.svg?branch=master)](https://travis-ci.org/furkleindustries/big-uuid)
 [![Code coverage](https://codecov.io/gh/furkleindustries/big-uuid/branch/master/graph/badge.svg)](https://codecov.io/gh/furkleindustries/big-uuid/)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/furkleindustries/big-uuid.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/furkleindustries/big-uuid/alerts/)
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/furkleindustries/big-uuid.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/furkleindustries/big-uuid/context:javascript)
 
 # big-uuid
 
